@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<!--
+    Copyright (c) 2012-2016 Adobe Systems Incorporated. All rights reserved.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
+    <!-- This is a wide open CSP declaration. To lock this down for production, see below. -->
+    <!--<meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *" />
+    <!-- Good default declaration:
+    * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
+    * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
+    * Disables use of eval() and inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
+        * Enable inline JS: add 'unsafe-inline' to default-src
+        * Enable eval(): add 'unsafe-eval' to default-src
+    * Create your own at http://cspisawesome.com
+    -->
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: 'unsafe-inline' https://ssl.gstatic.com; style-src 'self' 'unsafe-inline'; media-src *" /> -->
+    
+    <link rel="stylesheet" href="css/themes/myTheme.css" />
+    <link rel="stylesheet" href="css/index.css" />
+    <link rel="stylesheet" href="css/themes/jquery.mobile.icons.min.css" />
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+    <script src="https://code.jquery.com/jquery-2.1.4.js" integrity="sha256-siFczlgw4jULnUICcdm9gjQPZkw/YPDqhQ9+nAOScE4=" crossorigin="anonymous"></script>
+    <!--<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>-->
+    <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <!--<script src="https://code.jquery.com/jquery-1.12.4.js"></script>-->
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="js/jquery.ui.touch-punch.min.js"></script>
+    <script type="text/javascript" src="cordova.js"></script>
+    
+    <script>
+        
+        function loginSuccess(response)
+        {
+            console.log("Login succeeded!");
+            console.log("response: ", response);
+            window.location.href = "#menu";
+        }
+        
+        function loginFail(response)
+        {
+            console.log("Login failed!");
+            console.log("response: ", response);
+            alert("error loggin in :(");
+        }
+
+        function doFacebookLogin()
+        {
+            console.log("Doing facebook login!");
+            facebookConnectPlugin.login(["email"], loginSuccess, loginFail);
+        }
+    </script>
+    <title>Hello World</title>
+</head>
+
+<body>
+    <!-- Start of first page -->
+    <div data-role="page" id="main">
+        <div data-role="header">
+            <h1>Dress up</h1>
+        </div>
+        <div role="main" class="ui-content">            
+            <br>
+            <a href="#login"  data-rel="popup" data-position-to="slideup" class="ui-btn ui-corner-all ui-shadow " data-transition="pop">Login</a>
+            <div data-role="popup" id="login" data-theme="a" class="ui-corner-all">
+                <form>
+                    <div style="padding:10px 20px;">
+                        <h3>Please sign in</h3>
+                        <label for="un" class="ui-hidden-accessible">Username:</label>
+                        <input type="text" name="user" id="un" value="" placeholder="username" data-theme="a">
+                        <label for="pw" class="ui-hidden-accessible">Password:</label>
+                        <input type="password" name="pass" id="pw" value="" placeholder="password" data-theme="a">
+                        <a onclick="doFacebookLogin();" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ">login with Facebook</a>
+                        <a href="#signup" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ">login with Google account</a>
+                        <a href="#menu" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left">Sign in</a>
+                    </div>
+                </form>
+            </div>
+            <a href="#signup" class="ui-btn ui-corner-all ui-shadow ">Sign Up</a>
+       
+        </div>
+        
+    </div>
+  
+    <!-- Start of signup page -->
+    <div data-role="page" id="signup">
+        <div data-role="header">            
+            <h1>Dress up</h1>
+        </div>
+        <div role="main" class="ui-content">
+            <form  style="width:90%; display: block; margin-left: auto; margin-right: auto;">
+                <br>
+                Nickname: <input type="text" id="nickname">
+                Firstname: <input type="text" id="firstname">
+                Surname: <input type="text" id="surname">
+                Email: <input type="text" id="email">            
+                <a href="#menu" id="signup" class="ui-btn ui-btn-inline ">Save</a>
+            </form>
+        </div>
+        
+    </div>
+    
+    <!-- Start of menu page -->
+    <div data-role="page" id="menu">
+        <div data-role="header">
+              
+            <h1>Dress up</h1>
+        </div>
+        <div role="main" class="ui-content">
+            <a href="#show" class="ui-btn ui-corner-all ui-shadow ">Start your own design</a>
+            <a href="#demos" class="ui-btn ui-corner-all ui-shadow ">View others designs</a>
+        </div>
+        
+    </div>
+    
+    <!-- Start of game page -->
+    <div data-role="page" data-theme="c" id="show">         
+        <div data-role="header" data-theme="a" data-position="fixed">
+		    <h1>Dress up</h1>
+            <a href="#menu" class="ui-btn ui-corner-all ui-btn-inline ui-icon-home ui-btn-icon-notext"></a>
+            <a href="#saveGame" id="savedata" data-rel="popup" data-position-to="slideup"  data-transition="pop" class="ui-btn ui-corner-all ui-btn-inline ">Save</a>
+        </div>      
+        <div data-role="popup" id="saveGame" data-theme="a" class="ui-corner-all">
+                <form>
+                    <div style="padding:10px 20px;">
+                        <h4>Your selections save as:</h4>
+                        <input type="text" name="user" id="pn" value="" placeholder="picture name" data-theme="a">
+                        <a href="#menu" class="ui-btn ui-corner-all ui-btn-inline">Yes</a>
+                        <a href="#" class="ui-btn ui-corner-all ui-btn-inline">No</a>
+                    </div>
+                </form>
+        </div>
+
+        <div data-role="main" class="ui-content">         
+            <div id="list">          
+                <div id="list0" style="postion: absolute; top: 8px; left: 16px;">
+                    <img class="dr0" id="hat0" src="img/hat1.png">
+                    <img class="dr0" id="hat0" src="img/hat2.png">
+                    <img class="dr0" id="hat0" src="img/hat3.png">                    
+                </div>     
+
+                <div id="list1" style="postion: relative; top: 8px; left: 16px;">
+                    <img class="dr1" id="top0" src="img/top1.png">
+                    <img class="dr1" id="top1" src="img/top2.png">
+                    <img class="dr1" id="top2" src="img/top3.png">
+                </div> 
+                <div id="list2" style="postion: relative; top: 8px; left: 16px;">
+                    <img class="dr2" id="pants1" src="img/pants1.png">
+                    <img class="dr2" id="pants2" src="img/pants2.png">
+                    <img class="dr2" id="pants3" src="img/pants3.png">
+                </div> 
+<!--
+                <div id="list3" style="postion: relative; top: 8px; left: 16px;">
+                    <img class="dr3" id="dress1" src="http://placekitten.com/127/127">
+                    <img class="dr3" id="dress2" src="http://placekitten.com/131/131">
+                    <img class="dr3" id="dress3" src="http://placekitten.com/133/133">
+                </div> 
+                <div id="list4" style="postion: relative; top: 8px; left: 16px;">
+                    <img class="dr4" id="shoes1" src="http://placekitten.com/129/129">
+                    <img class="dr4" id="shoes2" src="http://placekitten.com/130/130">
+                    <img class="dr4" id="shoes3" src="http://placekitten.com/132/132">
+                </div> 
+                <div id="list5" style="postion: relative; top: 8px; left: 16px;">
+                    <img class="dr5" id="test1" src="http://placekitten.com/127/127">
+                    <img class="dr5" id="test2" src="http://placekitten.com/131/131">
+                    <img class="dr5" id="test3" src="http://placekitten.com/133/133">
+                </div> 
+                
+-->
+            </div> 
+
+            <ul id="bodayContainer">
+                <li>
+                    <div id="container0" style="background-color: yellow; height: 50px; width: 50px; top:0px; right:350px;">
+
+                    </div>
+                </li>
+                <li>
+                    <div id="container1" style="background-color: #09F;	height: 50px; width: 50px; top:0px; right:0px;">
+
+                    </div>
+                </li> 
+                <li>
+                    <div id="container2" style="background-color: red; height: 50px; width: 50px; top:0px; right:350px;">
+
+                    </div>
+                </li>
+<!--
+                <li>
+                    <div id="container3" style="background-color: orange; height: 50px; width: 50px; top:0px; right:350px;">
+
+                    </div>
+                </li>
+                <li>
+                    <div id="container4" style="background-color: green; height: 50px; width: 50px; top:0px; right:350px;">
+
+                    </div>
+                </li>
+-->
+            </ul>
+        </div>
+      
+        <div data-role="footer"> 
+            <nav id="access" role="navigation">
+                <div class="menu">
+                    <ul id="content-container">
+                        <li><a href="#list0">Hat</a></li>
+                        <li><a href="#list1">Top</a></li>
+                        <li><a href="#list2">Pants</a></li>
+<!--
+                        <li><a href="#list3">Dress</a></li>
+                        <li><a href="#list4">Shoes</a></li>
+-->
+                    </ul>
+                </div>  
+            </nav>
+        </div>
+       
+    </div>
+    
+    <script type="text/javascript" src="js/index.js"></script>
+    <script type="text/javascript">     
+		 
+        $(document).ready(function(){           
+           
+            for(var j=0; j<10; j++){
+                if(j!=0){
+                    $('#list'+ j).hide();
+                }
+            }
+                 
+              
+            $('li a').on("click",function(){
+                
+                console.log("xx", $(this).attr('href'));
+                
+                for(var i = 0; i < 10; i++){
+                    
+                    if($(this).attr('href') == '#list'+i){
+                      // alert($(this).attr('href'));
+                        $('#list'+ i +'').show();                    
+                        $('#container'+ i +'').prop('disabled',false);
+                    } else {
+                         $('#container'+ i +'').prop('disabled',true);
+                        $('#list'+i+'').hide();
+                    }                
+                }
+
+            });
+
+        });
+        
+        $('#list div img').on("dragstart",function(event){
+            var dt = event.originalEvent.dataTransfer;
+            console.log("dragStart: ", $(this).attr('id'));
+            dt.setData('Text', $(this).attr('id'));  
+        });
+        
+        $('ul li div').on("dragenter dragover drop", function (event) {            
+            event.preventDefault();
+            if (event.type === 'drop') { 
+                
+                var listNumber = $(this).attr('id').replace(/[^\d.]/g,'');
+                console.log("listnumber:", listNumber);
+                
+                if ( $('#list'+listNumber).is(":visible") )    {
+                    
+                    var old=$(this).find('.dr'+listNumber).detach();     
+                    old.appendTo('#list'+listNumber).removeAttr('style');
+                    var data = event.originalEvent.dataTransfer.getData('Text',$(this).attr('id'));
+                    
+                    console.log("Final selection dropped:", data);   
+                    var name = $(this).attr('id'); 
+                    console.log(name);
+                    window.localStorage.setItem(name, data);
+                    
+                    de=$('#'+data).detach();
+                    de.css({'top':0+'px','left':0+'px'}).appendTo($(this));                   
+                }               
+            };            
+        });
+        
+        $('#savedata').on("click", function(event){
+            
+            for(i=0;i<localStorage.length;i++){
+                console.log(localStorage.key(i), window.localStorage.getItem(localStorage.key(i)));
+            };           
+                        
+        });
+		 	
+        
+        $(document).on("pagecreate", function() {
+            $(document).on("pagecontainershow", function(){
+                $(".ui-content").height(getRealContentHeight());
+            })
+
+            $(window).on("resize orientationchange", function(){
+                $(".ui-content").height(getRealContentHeight());
+            })
+            
+            function getRealContentHeight() {
+                var activePage = $.mobile.pageContainer.pagecontainer("getActivePage"),
+                screen = $.mobile.getScreenHeight(),
+                header = $(".ui-header").hasClass("ui-header-fixed") ? $(".ui-header").outerHeight() - 1 : $(".ui-header").outerHeight(),
+                footer = $(".ui-footer").hasClass("ui-footer-fixed") ? $(".ui-footer").outerHeight() - 1 : $(".ui-footer").outerHeight(),
+                contentMargins = $(".ui-content", activePage).outerHeight() - $(".ui-content", activePage).height();
+                var contentHeight = screen - header - footer - contentMargins;    
+                
+                return contentHeight;
+            }
+        });
+        app.initialize();
+
+        
+    </script>
+        
+</body>
+
+</html>
+
+
+ 
+
