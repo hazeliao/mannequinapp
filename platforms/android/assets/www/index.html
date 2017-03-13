@@ -38,9 +38,9 @@
     -->
     <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: 'unsafe-inline' https://ssl.gstatic.com; style-src 'self' 'unsafe-inline'; media-src *" /> -->
     
-    <link rel="stylesheet" href="css/themes/myTheme.css" />
+   
     <link rel="stylesheet" href="css/index.css" />
-    <link rel="stylesheet" href="css/themes/jquery.mobile.icons.min.css" />
+    
     <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
     <script src="https://code.jquery.com/jquery-2.1.4.js" integrity="sha256-siFczlgw4jULnUICcdm9gjQPZkw/YPDqhQ9+nAOScE4=" crossorigin="anonymous"></script>
     <!--<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>-->
@@ -50,36 +50,17 @@
     <script src="js/jquery.ui.touch-punch.min.js"></script>
     <script type="text/javascript" src="cordova.js"></script>
     
-    <script>
-        
-        function loginSuccess(response)
-        {
-            console.log("Login succeeded!");
-            console.log("response: ", response);
-            window.location.href = "#menu";
-        }
-        
-        function loginFail(response)
-        {
-            console.log("Login failed!");
-            console.log("response: ", response);
-            alert("error loggin in :(");
-        }
+    <link rel="stylesheet" href="css/themes/myTheme.min.css" />
+    <link rel="stylesheet" href="css/themes/jquery.mobile.icons.min.css" />  
 
-        function doFacebookLogin()
-        {
-            console.log("Doing facebook login!");
-            facebookConnectPlugin.login(["email"], loginSuccess, loginFail);
-        }
-    </script>
-    <title>Hello World</title>
+    <title>Mannequin</title>
 </head>
 
 <body>
     <!-- Start of first page -->
     <div data-role="page" id="main">
         <div data-role="header">
-            <h1>Dress up</h1>
+            <h1>Mannequin</h1>
         </div>
         <div role="main" class="ui-content">            
             <br>
@@ -107,7 +88,7 @@
     <!-- Start of signup page -->
     <div data-role="page" id="signup">
         <div data-role="header">            
-            <h1>Dress up</h1>
+            <h1>Mannequin</h1>
         </div>
         <div role="main" class="ui-content">
             <form  style="width:90%; display: block; margin-left: auto; margin-right: auto;">
@@ -116,7 +97,7 @@
                 Firstname: <input type="text" id="firstname">
                 Surname: <input type="text" id="surname">
                 Email: <input type="text" id="email">            
-                <a href="#menu" id="signup" class="ui-btn ui-btn-inline ">Save</a>
+                <a href="#menu" id="signup" class="ui-btn ui-corner-all ui-btn-inline ">Save</a>
             </form>
         </div>
         
@@ -126,7 +107,7 @@
     <div data-role="page" id="menu">
         <div data-role="header">
               
-            <h1>Dress up</h1>
+            <h1>Mannequin</h1>
         </div>
         <div role="main" class="ui-content">
             <a href="#show" class="ui-btn ui-corner-all ui-shadow ">Start your own design</a>
@@ -153,20 +134,35 @@
                 </form>
         </div>
 
-        <div data-role="main" class="ui-content">         
+        <div data-role="main" class="ui-content">  
+            <div> 
+                <nav id="access" role="navigation">
+                    <div class="menu">
+                        <ul id="content-container">
+                            <li><a href="#list0">Hat</a></li>
+                            <li><a href="#list1">Top</a></li>
+                            <li><a href="#list2">Pants</a></li>
+    <!--
+                            <li><a href="#list3">Dress</a></li>
+                            <li><a href="#list4">Shoes</a></li>
+    -->
+                        </ul>
+                    </div>  
+                </nav>
+            </div>
             <div id="list">          
-                <div id="list0" style="postion: absolute; top: 8px; left: 16px;">
+                <div id="list0" style="position: relative; top: 8px; left: 16px;">
                     <img class="dr0" id="hat0" src="img/hat1.png">
                     <img class="dr0" id="hat0" src="img/hat2.png">
                     <img class="dr0" id="hat0" src="img/hat3.png">                    
                 </div>     
 
-                <div id="list1" style="postion: relative; top: 8px; left: 16px;">
+                <div id="list1" style="position: relative; top: 8px; left: 16px;">
                     <img class="dr1" id="top0" src="img/top1.png">
                     <img class="dr1" id="top1" src="img/top2.png">
                     <img class="dr1" id="top2" src="img/top3.png">
                 </div> 
-                <div id="list2" style="postion: relative; top: 8px; left: 16px;">
+                <div id="list2" style="position: relative; top: 8px; left: 16px;">
                     <img class="dr2" id="pants1" src="img/pants1.png">
                     <img class="dr2" id="pants2" src="img/pants2.png">
                     <img class="dr2" id="pants3" src="img/pants3.png">
@@ -202,11 +198,13 @@
 
                     </div>
                 </li> 
+<!--
                 <li>
                     <div id="container2" style="background-color: red; height: 50px; width: 50px; top:0px; right:350px;">
 
                     </div>
                 </li>
+-->
 <!--
                 <li>
                     <div id="container3" style="background-color: orange; height: 50px; width: 50px; top:0px; right:350px;">
@@ -221,120 +219,10 @@
 -->
             </ul>
         </div>
-      
-        <div data-role="footer"> 
-            <nav id="access" role="navigation">
-                <div class="menu">
-                    <ul id="content-container">
-                        <li><a href="#list0">Hat</a></li>
-                        <li><a href="#list1">Top</a></li>
-                        <li><a href="#list2">Pants</a></li>
-<!--
-                        <li><a href="#list3">Dress</a></li>
-                        <li><a href="#list4">Shoes</a></li>
--->
-                    </ul>
-                </div>  
-            </nav>
-        </div>
-       
     </div>
     
     <script type="text/javascript" src="js/index.js"></script>
-    <script type="text/javascript">     
-		 
-        $(document).ready(function(){           
-           
-            for(var j=0; j<10; j++){
-                if(j!=0){
-                    $('#list'+ j).hide();
-                }
-            }
-                 
-              
-            $('li a').on("click",function(){
-                
-                console.log("xx", $(this).attr('href'));
-                
-                for(var i = 0; i < 10; i++){
-                    
-                    if($(this).attr('href') == '#list'+i){
-                      // alert($(this).attr('href'));
-                        $('#list'+ i +'').show();                    
-                        $('#container'+ i +'').prop('disabled',false);
-                    } else {
-                         $('#container'+ i +'').prop('disabled',true);
-                        $('#list'+i+'').hide();
-                    }                
-                }
 
-            });
-
-        });
-        
-        $('#list div img').on("dragstart",function(event){
-            var dt = event.originalEvent.dataTransfer;
-            console.log("dragStart: ", $(this).attr('id'));
-            dt.setData('Text', $(this).attr('id'));  
-        });
-        
-        $('ul li div').on("dragenter dragover drop", function (event) {            
-            event.preventDefault();
-            if (event.type === 'drop') { 
-                
-                var listNumber = $(this).attr('id').replace(/[^\d.]/g,'');
-                console.log("listnumber:", listNumber);
-                
-                if ( $('#list'+listNumber).is(":visible") )    {
-                    
-                    var old=$(this).find('.dr'+listNumber).detach();     
-                    old.appendTo('#list'+listNumber).removeAttr('style');
-                    var data = event.originalEvent.dataTransfer.getData('Text',$(this).attr('id'));
-                    
-                    console.log("Final selection dropped:", data);   
-                    var name = $(this).attr('id'); 
-                    console.log(name);
-                    window.localStorage.setItem(name, data);
-                    
-                    de=$('#'+data).detach();
-                    de.css({'top':0+'px','left':0+'px'}).appendTo($(this));                   
-                }               
-            };            
-        });
-        
-        $('#savedata').on("click", function(event){
-            
-            for(i=0;i<localStorage.length;i++){
-                console.log(localStorage.key(i), window.localStorage.getItem(localStorage.key(i)));
-            };           
-                        
-        });
-		 	
-        
-        $(document).on("pagecreate", function() {
-            $(document).on("pagecontainershow", function(){
-                $(".ui-content").height(getRealContentHeight());
-            })
-
-            $(window).on("resize orientationchange", function(){
-                $(".ui-content").height(getRealContentHeight());
-            })
-            
-            function getRealContentHeight() {
-                var activePage = $.mobile.pageContainer.pagecontainer("getActivePage"),
-                screen = $.mobile.getScreenHeight(),
-                header = $(".ui-header").hasClass("ui-header-fixed") ? $(".ui-header").outerHeight() - 1 : $(".ui-header").outerHeight(),
-                footer = $(".ui-footer").hasClass("ui-footer-fixed") ? $(".ui-footer").outerHeight() - 1 : $(".ui-footer").outerHeight(),
-                contentMargins = $(".ui-content", activePage).outerHeight() - $(".ui-content", activePage).height();
-                var contentHeight = screen - header - footer - contentMargins;    
-                
-                return contentHeight;
-            }
-        });
-        app.initialize();
-
-        
-    </script>
         
 </body>
 
