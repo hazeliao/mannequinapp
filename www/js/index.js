@@ -40,3 +40,111 @@ var app = {
         
     }
 };
+function loginSuccess(response)
+{
+	console.log("Login succeeded!");
+	console.log("response: ", response);
+	window.location.href = "#menu";
+}
+
+function loginFail(response)
+{
+	console.log("Login failed!");
+	console.log("response: ", response);
+	alert("error loggin in :(");
+}
+
+function doFacebookLogin()
+{
+	console.log("Doing facebook login!");
+	facebookConnectPlugin.login(["email"], loginSuccess, loginFail);
+}
+$(document).ready(function(){           
+   
+	for(var j=0; j<10; j++){
+		if(j!=0){
+			$('#list'+ j).hide();
+		}
+	}
+		 
+	  
+	$('li a').on("click",function(){
+		
+		console.log("xx", $(this).attr('href'));
+		
+		for(var i = 0; i < 10; i++){
+			
+			if($(this).attr('href') == '#list'+i){
+			  // alert($(this).attr('href'));
+				$('#list'+ i +'').show();                    
+				$('#container'+ i +'').prop('disabled',false);
+			} else {
+				 $('#container'+ i +'').prop('disabled',true);
+				$('#list'+i+'').hide();
+			}                
+		}
+
+	});
+
+});
+
+$('#list div img').on("dragstart",function(event){
+	var dt = event.originalEvent.dataTransfer;
+	console.log("dragStart: ", $(this).attr('id'));
+	dt.setData('Text', $(this).attr('id'));  
+});
+
+$('ul li div').on("dragenter dragover drop", function (event) {            
+	event.preventDefault();
+	if (event.type === 'drop') { 
+		
+		var listNumber = $(this).attr('id').replace(/[^\d.]/g,'');
+		console.log("listnumber:", listNumber);
+		
+		if ( $('#list'+listNumber).is(":visible") )    {
+			
+			var old=$(this).find('.dr'+listNumber).detach();     
+			old.appendTo('#list'+listNumber).removeAttr('style');
+			var data = event.originalEvent.dataTransfer.getData('Text',$(this).attr('id'));
+			
+			console.log("Final selection dropped:", data);   
+			var name = $(this).attr('id'); 
+			console.log(name);
+			window.localStorage.setItem(name, data);
+			
+			de=$('#'+data).detach();
+			de.css({'top':0+'px','left':0+'px'}).appendTo($(this));                   
+		}               
+	};            
+});
+
+$('#savedata').on("click", function(event){
+	
+	for(i=0;i<localStorage.length;i++){
+		console.log(localStorage.key(i), window.localStorage.getItem(localStorage.key(i)));
+	};           
+				
+});
+	
+
+$(document).on("pagecreate", function() {
+	$(document).on("pagecontainershow", function(){
+		$(".ui-content").height(getRealContentHeight());
+	})
+
+	$(window).on("resize orientationchange", function(){
+		$(".ui-content").height(getRealContentHeight());
+	})
+	
+	function getRealContentHeight() {
+		var activePage = $.mobile.pageContainer.pagecontainer("getActivePage"),
+		screen = $.mobile.getScreenHeight(),
+		header = $(".ui-header").hasClass("ui-header-fixed") ? $(".ui-header").outerHeight() - 1 : $(".ui-header").outerHeight(),
+		footer = $(".ui-footer").hasClass("ui-footer-fixed") ? $(".ui-footer").outerHeight() - 1 : $(".ui-footer").outerHeight(),
+		contentMargins = $(".ui-content", activePage).outerHeight() - $(".ui-content", activePage).height();
+		var contentHeight = screen - header - footer - contentMargins;    
+		
+		return contentHeight;
+	}
+});
+app.initialize();
