@@ -144,6 +144,27 @@ img {
     width: 50px;
 }
 
+
 li {
     display: inline;
    }
+
+.imgBigger {
+    height:200px;
+    width: 200px;
+    display: block;
+    margin: 0 auto;
+}
+/*
+#list div img:hover{
+    color: #424242; 
+    -webkit-transition: all .3s ease-in;
+    -moz-transition: all .3s ease-in;
+    -ms-transition: all .3s ease-in;
+    -o-transition: all .3s ease-in;
+    transition: all .3s ease-in;
+    opacity: 1;
+    transform: scale(2.15);
+    -ms-transform: scale(2.15); IE 9 
+    -webkit-transform: scale(2.15);  Safari and Chrome 
+}*/
