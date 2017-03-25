@@ -51,7 +51,9 @@
     <script type="text/javascript" src="cordova.js"></script>
     
     <link rel="stylesheet" href="css/themes/myTheme.min.css" />
-    <link rel="stylesheet" href="css/themes/jquery.mobile.icons.min.css" />  
+    <link rel="stylesheet" href="css/themes/jquery.mobile.icons.min.css" />
+
+    <script type="text/javascript" src="js/index.js"></script>
 
     <title>Mannequin</title>
 </head>
@@ -69,13 +71,13 @@
                 <form>
                     <div style="padding:10px 20px;">
                         <h3>Please sign in</h3>
-                        <label for="un" class="ui-hidden-accessible">Username:</label>
-                        <input type="text" name="user" id="un" value="" placeholder="username" data-theme="a">
-                        <label for="pw" class="ui-hidden-accessible">Password:</label>
-                        <input type="password" name="pass" id="pw" value="" placeholder="password" data-theme="a">
+                        <label for="loginEmail" class="ui-hidden-accessible">Username:</label>
+                        <input type="text" name="user" id="loginEmail" value="" placeholder="Email" data-theme="a">
+                        <label for="loginPassword" class="ui-hidden-accessible">Password:</label>
+                        <input type="password" name="pass" id="loginPassword" value="" placeholder="Password" data-theme="a">
                         <a onclick="doFacebookLogin();" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ">login with Facebook</a>
                         <a onclick="tryGoogleLogin();" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ">login with Google account</a>
-                        <a href="#menu" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left">Sign in</a>
+                        <a onclick="localStorageLogin();" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left">Sign in</a>
                     </div>
                 </form>
             </div>
@@ -89,16 +91,24 @@
     <div data-role="page" id="signup">
         <div data-role="header">            
             <h1>Mannequin</h1>
+            <a href="#main" class="ui-btn ui-corner-all ui-btn-inline ui-icon-carat-l ui-btn-icon-notext" ></a>
         </div>
         <div role="main" class="ui-content">
             <form  style="width:90%; display: block; margin-left: auto; margin-right: auto;">
                 <br>
-                Nickname: <input type="text" id="nickname">
-                Firstname: <input type="text" id="firstname">
-                Surname: <input type="text" id="surname">
-                Email: <input type="text" id="email">            
-                <a href="#menu" id="signup" class="ui-btn ui-corner-all ui-btn-inline ">Save</a>
+                Nickname: <input type="text" id="createNickname" maxlength="32" placeholder="Write a cool username here, maximum 32 letters">
+                Password: <input type="password" id="createPassword" minlength="8"  maxlength="64" placeholder="Password must be at least 8 letters">
+                Email: <input type="email" id="createEmail" maxlength="64" placeholder="Your email will not be used for marketing">
+                <button type="button" onclick="registerNewUser();" class="ui-btn ui-corner-all ui-btn-inline "id="createNewAccount">Create Account</button>
             </form>
+
+            <br/>
+            <!-- ADMIN functionality
+            <form  style="width:90%; display: block; margin-left: auto; margin-right: auto;">
+                <input type="email" id="userEmailToDelete" placeholder="Write email to delete from user database">
+                <button type="button" onclick="deleteUser();" class="ui-btn ui-corner-all ui-btn-inline "id="deleteUserButton">Delete user</button>
+            </form>
+            -->
         </div>
         
     </div>
@@ -106,12 +116,24 @@
     <!-- Start of menu page -->
     <div data-role="page" id="menu">
         <div data-role="header">
-              
+
             <h1>Mannequin</h1>
+            <!-- <a href="#menu" class="ui-btn ui-corner-all ui-btn-inline ui-icon-power ui-btn-icon-notext"></a> -->
+            <a href="#logout" class="ui-btn ui-corner-all ui-btn-inline ui-icon-carat-l ui-btn-icon-notext" data-rel="popup" data-position-to="slideup" data-transition="pop"></a>
+            <div data-role="popup" id="logout" data-theme="a" class="ui-corner-all">
+                <form>
+                    <div style="padding:10px 20px;">
+                        <h3>Logout?</h3>
+                        <a onclick="logout();" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ">yes</a>
+                        <a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ">no</a>
+                    </div>
+                </form>
+            </div>
         </div>
         <div role="main" class="ui-content">
             <a href="#show" class="ui-btn ui-corner-all ui-shadow ">Start your own design</a>
-            <a href="#demos" class="ui-btn ui-corner-all ui-shadow ">View previews designs</a>
+            <a href="#demos" class="ui-btn ui-corner-all ui-shadow ">View previous designs</a>
+
         </div>
         
     </div>
@@ -267,10 +289,6 @@
             </ul>
         </div>
     </div>
-    
-    <script type="text/javascript" src="js/index.js"></script>
-
-        
 </body>
 
 </html>

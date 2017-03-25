@@ -41,6 +41,119 @@ var app = {
     }
 };
 
+function log( stepName )
+{
+	console.log("------------------------------");
+	console.log(stepName);
+    console.log("------------------------------");
+}
+
+function logout()
+{
+    location.hash = "#main";
+}
+
+function localStorageLogin()
+{
+    var loginEmail = $('#loginEmail').val();
+    var loginPassword = $('#loginPassword').val();
+
+    console.log("loginEmail:" + loginEmail );
+    console.log("loginPassword:" + loginPassword );
+
+    var userNameData = window.localStorage.getItem(loginEmail);
+    if ( userNameData )
+	{
+		//Convert the string data into a JSON object from localStorage
+		console.log("userNameData: ", userNameData);
+        var userDataObject = JSON.parse(userNameData);
+        console.log("AFTER JSON.parse(userNameData): ", userDataObject);
+
+        //The data model:
+        //userDataObject.nickname = nickname;
+        //userDataObject.password = password;
+        //userDataObject.designs = [];
+
+        console.log("loginPassword: " + loginPassword + " dataObject.password: " + userDataObject.password);
+		if ( loginPassword == userDataObject.password )
+		{
+            console.log("Yay ! Passwords match!");
+            location.hash = "#menu";
+        } else
+		{
+			alert("Wrong password!");
+		}
+	} else {
+        alert("User name is invalid!");
+	}
+
+}
+
+function deleteUser()
+{
+	var userToDelete = $('#userEmailToDelete').val();
+    window.localStorage.removeItem(userToDelete);
+}
+
+function registerNewUser() {
+
+	var nickNameUserWants = $('#createNickname').val();
+    var passwordUserEntered = $('#createPassword').val();
+    var emailUserWants = $('#createEmail').val();
+
+    console.log("user_nickname: ", nickNameUserWants);
+    console.log("user_password: ", passwordUserEntered);
+    console.log("user_email: ", emailUserWants);
+
+    if ( !emailUserWants )
+	{
+		alert("Your email cannot be empty!");
+		return;
+	}
+
+	//
+	//Check if email is available for registering as a new account?
+	//
+	var emailKeyExists = doesEmailExistInLocalStorage(emailUserWants);
+    if ( emailKeyExists )
+	{
+		alert("Sorry, this email has already been used by another user!");
+		return;
+	}
+
+    log("Creating a new user...");
+
+	//
+	//	Register a new user with the now valid user email (it has passed all the checks!)
+	//
+	createNewUser(nickNameUserWants, emailUserWants, passwordUserEntered);
+}
+
+function createNewUser(nickname, email, password)
+{
+
+	var userDataObject = {}
+
+	userDataObject.nickname = nickname;
+	userDataObject.password = password;
+	userDataObject.designs = [];
+
+	console.log(userDataObject);
+
+    window.localStorage.setItem(email, JSON.stringify(userDataObject));
+    location.hash = "#menu";
+}
+
+function doesEmailExistInLocalStorage(userEmailToCheck)
+{
+	var userEmail = window.localStorage.getItem(userEmailToCheck);
+
+    console.log("doesEmailExistInLocalStorage: ", userEmail);
+
+    //Returns that the email is available if anything the key exists in localStorage.
+	return userEmail ? true : false;
+}
+
 function tryGoogleLogin()
 {
 
@@ -111,7 +224,6 @@ $(document).ready(function(){
 $(function(){
     //var clicked = 0;
     $('#list div a img').on("click", function(){
-        console.log("testtest!!!");
         var listNumber = $(this).attr('class').replace(/[^\d.]/g,'');
         console.log("listnumber:", listNumber);
         var trial = $(this).attr('src');      
