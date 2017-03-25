@@ -18,5 +18,16 @@
             "APP_ID": "208554899623511",
             "APP_NAME": "MobileTest"
         }
+    },
+    "cordova-plugin-googleplus": {
+        "source": {
+            "type": "git",
+            "url": "https://github.com/EddyVerbruggen/cordova-plugin-googleplus",
+            "subdir": "."
+        },
+        "is_top_level": true,
+        "variables": {
+            "REVERSED_CLIENT_ID": "583206289891-m7skg1leo0qpogr9931v6h1ui4fsmmlq.apps.googleusercontent.com"
+        }
     }
 }

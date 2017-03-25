@@ -14,6 +14,9 @@
             "APP_ID": "208554899623511",
             "APP_NAME": "MobileTest",
             "PACKAGE_NAME": "com.shanliao.mannequinapp"
+        },
+        "cordova-plugin-googleplus": {
+            "PACKAGE_NAME": "com.shanliao.mannequinapp"
         }
     },
     "dependent_plugins": {}
