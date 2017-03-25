@@ -40,6 +40,27 @@ var app = {
         
     }
 };
+
+function tryGoogleLogin()
+{
+
+	window.plugins.googleplus.login(
+		{
+		  'scopes': '', // optional, space-separated list of scopes, If not included or empty, defaults to `profile` and `email`.
+		  'webClientId': '583206289891-eokrhgg2ignd47uqnqg3c95didpei892.apps.googleusercontent.com', // optional clientId of your Web application from Credentials settings of your project - On Android, this MUST be included to get an idToken. On iOS, it is not required.
+		  'offline': true, // optional, but requires the webClientId - if set to true the plugin will also return a serverAuthCode, which can be used to grant offline access to a non-Google server
+		},
+		function (obj) {
+			console.log(obj);
+			window.location.href = "#menu";
+		  //alert(JSON.stringify(obj)); // do something useful instead of alerting
+		},
+		function (msg) {
+		  alert('error: ' + msg);
+		}
+	);
+};
+
 function loginSuccess(response)
 {
 	console.log("Login succeeded!");
@@ -65,8 +86,7 @@ $(document).ready(function(){
 		if(j!=0){
 			$('#list'+ j).hide();
 		}
-	}
-		 
+	}		 
 	  
 	$('li a').on("click",function(){
 		
@@ -87,6 +107,29 @@ $(document).ready(function(){
 	});
 
 });
+
+$(function(){
+    //var clicked = 0;
+    $('#list div a img').on("click", function(){
+        console.log("testtest!!!");
+        var listNumber = $(this).attr('class').replace(/[^\d.]/g,'');
+        console.log("listnumber:", listNumber);
+        var trial = $(this).attr('src');      
+        console.log(trial);
+       /* clicked++;
+        if ( clicked >= 2){*/
+        $('#container'+listNumber).attr("src", trial);
+        var data = $(this).attr('id');
+        console.log(data);
+        window.localStorage.setItem("container"+listNumber, data);
+            //clicked=0;
+       // } 
+    });    
+});
+
+
+/*
+//website jquery drag and drop 
 
 $('#list div img').on("dragstart",function(event){
 	var dt = event.originalEvent.dataTransfer;
@@ -117,7 +160,7 @@ $('ul li div').on("dragenter dragover drop", function (event) {
 		}               
 	};            
 });
-
+*/
 $('#savedata').on("click", function(event){
 	
 	for(i=0;i<localStorage.length;i++){

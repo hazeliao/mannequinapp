@@ -74,7 +74,7 @@
                         <label for="pw" class="ui-hidden-accessible">Password:</label>
                         <input type="password" name="pass" id="pw" value="" placeholder="password" data-theme="a">
                         <a onclick="doFacebookLogin();" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ">login with Facebook</a>
-                        <a href="#signup" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ">login with Google account</a>
+                        <a onclick="tryGoogleLogin();" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ">login with Google account</a>
                         <a href="#menu" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left">Sign in</a>
                     </div>
                 </form>
@@ -111,7 +111,7 @@
         </div>
         <div role="main" class="ui-content">
             <a href="#show" class="ui-btn ui-corner-all ui-shadow ">Start your own design</a>
-            <a href="#demos" class="ui-btn ui-corner-all ui-shadow ">View others designs</a>
+            <a href="#demos" class="ui-btn ui-corner-all ui-shadow ">View previews designs</a>
         </div>
         
     </div>
@@ -152,20 +152,67 @@
             </div>
             <div id="list">          
                 <div id="list0" style="position: relative; top: 8px; left: 16px;">
-                    <img class="dr0" id="hat0" src="img/hat1.png">
-                    <img class="dr0" id="hat0" src="img/hat2.png">
-                    <img class="dr0" id="hat0" src="img/hat3.png">                    
+                    <a href="#popuphat0" data-rel="popup" data-postion-to="window" data-transition="slide">
+                        <img class="dr0" id="hat0" src="img/hat1.png" />
+                    </a>
+                    <a href="#popuphat1" data-rel="popup" data-postion-to="window" data-transition="slide">
+                        <img class="dr0" id="hat1" src="img/hat2.png"/>
+                    </a>
+                    <a href="#popuphat2" data-rel="popup" data-postion-to="window" data-transition="slide">
+                        <img class="dr0" id="hat2" src="img/hat3.png"/> 
+                    </a>
+                    <div data-role="popup" id="popuphat0" data-position-to="window" data-overlay-theme="b" data-theme="b" data-corners="false">
+                        <img class="dr0" id="hat0" style="width:200px;height:200px;" src="img/hat1.png" alt="hat1"/> 
+                    </div>
+                    <div data-role="popup" id="popuphat1" data-position-to="window" data-overlay-theme="b" data-theme="b" data-corners="false">
+                        <img class="dr0" id="hat1" style="width:200px;height:200px;" src="img/hat2.png" alt="hat2"/> 
+                    </div>
+                    <div data-role="popup" id="popuphat2" data-position-to="window" data-overlay-theme="b" data-theme="b" data-corners="false">
+                        <img class="dr0" id="hat2" style="width:200px;height:200px;" src="img/hat3.png" alt="hat3"/> 
+                    </div>
+                    
                 </div>     
 
                 <div id="list1" style="position: relative; top: 8px; left: 16px;">
-                    <img class="dr1" id="top0" src="img/top1.png">
-                    <img class="dr1" id="top1" src="img/top2.png">
-                    <img class="dr1" id="top2" src="img/top3.png">
+                    <a href="#popuptop0" data-rel="popup" data-postion-to="window" data-transition="slide">
+                        <img class="dr1" id="top0" src="img/top1.png"/>
+                    </a>
+                    <a href="#popuptop1" data-rel="popup" data-postion-to="window" data-transition="slide">
+                        <img class="dr1" id="top1" src="img/top2.png"/>
+                    </a>
+                    <a href="#popuptop2" data-rel="popup" data-postion-to="window" data-transition="slide">
+                        <img class="dr1" id="top2" src="img/top3.png"/>
+                    </a>
+                    <div data-role="popup" id="popuptop0" data-position-to="window" data-overlay-theme="b" data-theme="b" data-corners="false">                        
+                        <img class="dr1" id="top0" style="width:200px;height:200px;" src="img/top1.png" alt="top1"/> 
+                    </div>
+                    <div data-role="popup" id="popuptop1" data-position-to="window" data-overlay-theme="b" data-theme="b" data-corners="false">                        
+                        <img class="dr1" id="top1" style="width:200px;height:200px;" src="img/top2.png" alt="top2"/> 
+                    </div>
+                    <div data-role="popup" id="popuptop2" data-position-to="window" data-overlay-theme="b" data-theme="b" data-corners="false">                        
+                        <img class="dr1" id="top2" style="width:200px;height:200px;" src="img/top3.png" alt="top3"/> 
+                    </div>
                 </div> 
                 <div id="list2" style="position: relative; top: 8px; left: 16px;">
-                    <img class="dr2" id="pants1" src="img/pants1.png">
-                    <img class="dr2" id="pants2" src="img/pants2.png">
-                    <img class="dr2" id="pants3" src="img/pants3.png">
+                    <a href="#popuppants0" data-rel="popup" data-postion-to="window" data-transition="slide">
+                        <img class="dr2" id="pants0" src="img/pants1.png"/>
+                    </a>
+                    <a href="#popuppants1" data-rel="popup" data-postion-to="window" data-transition="slide">
+                        <img class="dr2" id="pants1" src="img/pants2.png"/>
+                    </a>
+                    <a href="#popuppants2" data-rel="popup" data-postion-to="window" data-transition="slide">
+                        <img class="dr2" id="pants2" src="img/pants3.png"/>
+                    </a>
+                    <div data-role="popup" id="popuppants0" data-position-to="window" data-overlay-theme="b" data-theme="b" data-corners="false">                        
+                        <img class="dr1" id="top0" style="width:200px;height:200px;" src="img/pants1.png" alt="pants1"/> 
+                    </div>
+                    <div data-role="popup" id="popuppants1" data-position-to="window" data-overlay-theme="b" data-theme="b" data-corners="false">                        
+                        <img class="dr1" id="pants1" style="width:200px;height:200px;" src="img/pants2.png" alt="pants2"/> 
+                    </div>
+                    <div data-role="popup" id="popuppants2" data-position-to="window" data-overlay-theme="b" data-theme="b" data-corners="false">
+<!--                        <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>-->
+                        <img class="dr1" id="pants2" style="width:200px;height:200px;" src="img/pants3.png" alt="pants3"/> 
+                    </div>
                 </div> 
 <!--
                 <div id="list3" style="postion: relative; top: 8px; left: 16px;">
@@ -189,22 +236,22 @@
 
             <ul id="bodayContainer">
                 <li>
-                    <div id="container0" style="background-color: yellow; height: 50px; width: 50px; top:0px; right:350px;">
-
+                    <div style="background-color: yellow; height: 50px; width: 50px; top:0px; right:350px;">
+                        <img id="container0"  src="img/hat2.png"/>
                     </div>
                 </li>
                 <li>
-                    <div id="container1" style="background-color: #09F;	height: 50px; width: 50px; top:0px; right:0px;">
-
+                    <div style="background-color: #09F;	height: 50px; width: 50px; top:0px; right:0px;">
+                        <img id="container1"  src="img/top2.png"/>
                     </div>
                 </li> 
-<!--
-                <li>
-                    <div id="container2" style="background-color: red; height: 50px; width: 50px; top:0px; right:350px;">
 
+                <li>
+                    <div style="background-color: red; height: 50px; width: 50px; top:0px; right:350px;">
+                        <img id="container2"  src="img/pants2.png"/>
                     </div>
                 </li>
--->
+
 <!--
                 <li>
                     <div id="container3" style="background-color: orange; height: 50px; width: 50px; top:0px; right:350px;">
