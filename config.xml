@@ -28,4 +28,7 @@
         <variable name="APP_ID" value="208554899623511" />
         <variable name="APP_NAME" value="MobileTest" />
     </plugin>
+    <plugin name="cordova-plugin-googleplus" spec="https://github.com/EddyVerbruggen/cordova-plugin-googleplus">
+        <variable name="REVERSED_CLIENT_ID" value="583206289891-m7skg1leo0qpogr9931v6h1ui4fsmmlq.apps.googleusercontent.com" />
+    </plugin>
 </widget>
