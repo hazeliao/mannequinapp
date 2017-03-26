@@ -41,6 +41,72 @@ var app = {
     }
 };
 
+/**********************************************
+
+        designs showing with swipe
+        
+**************************************************/
+
+var designerIndex = 0;
+
+$(function(){
+  $( "#menu" ).on( "swipeleft", swipedLeft );
+  $( "#menu" ).on( "swiperight", swipedRight );
+ 
+  function swipedLeft( event ){
+      swipeDesign(1);
+  }
+    
+  function swipedRight( event ){
+      swipeDesign(-1);
+  }
+});
+
+function swipeDesign( direction )
+{
+    console.log("Should change text, user swiped to: " + direction);
+    
+    var userList = getUserList();
+    
+    if ( designerIndex <= 0 && direction == -1 )
+        return;
+    if ( designerIndex >= userList.length-1 && direction == 1 )
+        return;
+
+    designerIndex += direction; 
+    
+    showDesigner(designerIndex);
+}
+
+function showDesigner( designerIndexNow )
+{
+    
+    /*
+    var textarr = [];
+    var userList = getUserList();
+    for (var i = 0 ; i < userList.length; i++){
+        var rawUser = window.localStorage.getItem(userList[i]);
+        var userData = JSON.parse(rawUser);
+        console.log("rawUser:" + rawUser);
+        console.log("UserData:" + userData);
+        textarr.push(userData.nickname);
+    }
+    */
+    
+    var userList = getUserList();
+    var rawUser = window.localStorage.getItem(userList[designerIndexNow]);
+    var userData = JSON.parse(rawUser);
+    $('#designersName').text(""+userData.nickname);
+    $('#designName').text("xx");
+    
+}
+
+function getUserList()
+{
+    var rawUserList = window.localStorage.getItem("userList");
+    return JSON.parse(rawUserList);
+}
+
 function log( stepName )
 {
 	console.log("------------------------------");
@@ -50,6 +116,8 @@ function log( stepName )
 
 function logout()
 {
+    log("Logged out user: "+window.localStorage.getItem("loggedInUser"));
+    window.localStorage.removeItem("loggedInUser");
     location.hash = "#main";
 }
 
@@ -58,16 +126,14 @@ function localStorageLogin()
     var loginEmail = $('#loginEmail').val();
     var loginPassword = $('#loginPassword').val();
 
-    console.log("loginEmail:" + loginEmail );
-    console.log("loginPassword:" + loginPassword );
+    console.log("loginEmail:" + loginEmail + " loginPassword:" + loginPassword );
 
     var userNameData = window.localStorage.getItem(loginEmail);
     if ( userNameData )
 	{
 		//Convert the string data into a JSON object from localStorage
-		console.log("userNameData: ", userNameData);
-        var userDataObject = JSON.parse(userNameData);
-        console.log("AFTER JSON.parse(userNameData): ", userDataObject);
+		var userDataObject = JSON.parse(userNameData);
+        console.log("userNameData: ", userNameData, " JSON.parse(userNameData): ", userDataObject);
 
         //The data model:
         //userDataObject.nickname = nickname;
@@ -78,7 +144,17 @@ function localStorageLogin()
 		if ( loginPassword == userDataObject.password )
 		{
             console.log("Yay ! Passwords match!");
+            $('#userNameLoggedIn').text(""+userDataObject.nickname);
+            
+            window.localStorage.setItem("loggedInUser", loginEmail);
+
+            //This won't add the user twice if it already is found on the list.
+            addUserToUsersList( loginEmail );
+
             location.hash = "#menu";
+            
+            showDesigner(0);
+            
         } else
 		{
 			alert("Wrong password!");
@@ -89,11 +165,54 @@ function localStorageLogin()
 
 }
 
+function addUserToUsersList( loginEmail )
+{
+    //If user list does not exist yet, create one.
+    var rawUserList = window.localStorage.getItem("userList");
+    var existingUserList = JSON.parse(rawUserList);
+    if ( !existingUserList )
+    {
+        var userList = [];
+        userList[0] = loginEmail;
+        window.localStorage.setItem("userList", JSON.stringify(userList));
+        return;
+    }
+
+    //If the login email does not exist in the list, add the user to the list, otherwise dont.
+    for ( var i = 0; i < existingUserList.length; i++ )
+        if ( existingUserList[i] == loginEmail )
+            return;
+
+
+    existingUserList.push(loginEmail);
+    window.localStorage.setItem("userList", JSON.stringify(existingUserList));
+
+}
+
+function isUserInList( validListOfUsers, emailToSearchFor )
+{
+    for ( var i = 0; i < validListOfUsers.length; i++ )
+    {
+        //Found the user already in the userlist! :)
+        if ( validListOfUsers[i] == emailToSearchFor )
+            return true;
+    }
+    
+    //Could not find user in the list, return false, this user will probably have to be added to the userlist.
+    return false;
+}
+
 function deleteUser()
 {
 	var userToDelete = $('#userEmailToDelete').val();
     window.localStorage.removeItem(userToDelete);
 }
+
+/*****************************************
+
+        sign up new user
+        
+*****************************************/
 
 function registerNewUser() {
 
@@ -139,7 +258,7 @@ function createNewUser(nickname, email, password)
 	userDataObject.designs = [];
 
 	console.log(userDataObject);
-
+    addUserToUsersList( email );
     window.localStorage.setItem(email, JSON.stringify(userDataObject));
     location.hash = "#menu";
 }
@@ -153,6 +272,13 @@ function doesEmailExistInLocalStorage(userEmailToCheck)
     //Returns that the email is available if anything the key exists in localStorage.
 	return userEmail ? true : false;
 }
+
+
+/*****************************************
+
+        google login
+        
+*****************************************/
 
 function tryGoogleLogin()
 {
@@ -174,6 +300,14 @@ function tryGoogleLogin()
 	);
 };
 
+
+/*****************************************
+
+        facebook login
+        
+*****************************************/
+
+
 function loginSuccess(response)
 {
 	console.log("Login succeeded!");
@@ -193,6 +327,14 @@ function doFacebookLogin()
 	console.log("Doing facebook login!");
 	facebookConnectPlugin.login(["email"], loginSuccess, loginFail);
 }
+
+
+
+
+
+
+
+
 $(document).ready(function(){           
    
 	for(var j=0; j<10; j++){
@@ -221,9 +363,69 @@ $(document).ready(function(){
 
 });
 
+/***********************************************
+
+ get geolocation for weather
+
+****************************************/
+
+if(navigator.geolocation){
+                navigator.geolocation.getCurrentPosition(locationSuccess, locationError);
+            }
+            else{
+                showError("Your phone does not support geolocation!");
+        };
+
+        function locationSuccess(position){
+            var lat = position.coords.latitude;
+            var lon = position.coords.longitude;
+            fetchWeather(lat, lon);           
+        };
+
+        function locationError(error){
+            switch(error.code) {
+                case error.TIMEOUT:
+                    showError("A timeout occured! Please try again!");
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    showError('We can\'t detect your location. Sorry!');
+                    break;
+                case error.PERMISSION_DENIED:
+                    showError('Please allow geolocation access for this to work.');
+                    break;
+                case error.UNKNOWN_ERROR:
+                    showError('An unknown error occured!');
+                    break;
+            }
+        };
+
+        function showError(msg){
+           weatherDiv.addClass('error').html(msg);
+        };
+
+        function fetchWeather(lan, lon){            
+            
+            $.ajax({
+                url:"http://api.openweathermap.org/data/2.5/weather?lat="+lan+"&lon="+lon+"&APPID=c5480a0746e7943d8282d79f648a400a",
+                dataType:"json",
+                timeout:5000
+            })
+            .done(function(data){
+                $("#weather").attr("src",data.url);
+                $("#weatherIcon").attr("src","http://openweathermap.org/img/w/"+data.weather[0].icon+".png");                
+                            })
+        };
+
+
+/**************************************************
+
+            designing page
+
+*******************************************************/
+
 $(function(){
     //var clicked = 0;
-    $('#list div a img').on("click", function(){
+    $('#list div img').on("click", function(){
         var listNumber = $(this).attr('class').replace(/[^\d.]/g,'');
         console.log("listnumber:", listNumber);
         var trial = $(this).attr('src');      
