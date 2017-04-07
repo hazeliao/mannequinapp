@@ -260,6 +260,7 @@ function createNewUser(nickname, email, password)
 	console.log(userDataObject);
     addUserToUsersList( email );
     window.localStorage.setItem(email, JSON.stringify(userDataObject));
+    window.localStorage.setItem("loggedInUser", email);
     location.hash = "#menu";
 }
 
@@ -330,6 +331,49 @@ function doFacebookLogin()
 
 
 
+
+function saveTheDesign()
+{
+    console.log("Saving the design! !");
+    
+    var hat = window.localStorage.getItem("container0");
+    var top = window.localStorage.getItem("container1");
+    var pants = window.localStorage.getItem("container2");
+    
+    var designName = document.getElementById("designNameToSave").value;
+        
+    console.log("Saving the selections:"+
+                " hat: " + hat +
+                " top: " + top +
+                " pants: " + pants +
+                " designName: " + designName);
+                                    
+    
+    var loggedInUsername = window.localStorage.getItem("loggedInUser");
+    
+    if ( !loggedInUsername )
+    {
+        console.log("Error, currently logged in username did not exist or was invalid!");
+        return;
+    }
+
+    var rawUserData = window.localStorage.getItem( loggedInUsername );
+    var parsedUserData = JSON.parse(rawUserData);
+
+    var designObject = {};
+    
+    designObject.name = designName;
+    designObject.hat = hat;
+    designObject.top = top;
+    designObject.pants = pants;
+    
+    //Insert to the last item of the list, the new designObject, so the list automatically grows.
+    parsedUserData.designs.push(designObject);
+    
+    window.localStorage.setItem( loggedInUsername, JSON.stringify(parsedUserData));
+    
+    window.location.href = "#menu";
+}
 
 
 
