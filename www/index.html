@@ -59,6 +59,7 @@
 </head>
 
 <body>
+    <div id="fb-root"></div>
     <!-- Start of first page -->
     <div data-role="page" id="main">
         <div data-role="header">
@@ -132,14 +133,37 @@
             </div>
         </div>
         <div role="main" class="ui-content">
-            <a href="#show" class="ui-btn ui-corner-all ui-shadow ">Start your own design</a>
+            <a href="#show" onclick="resetDesign();" class="ui-btn ui-corner-all ui-shadow ">Start your own design</a>
             <!--<a href="#demos" class="ui-btn ui-corner-all ui-shadow ">View previous designs</a> -->
             
             <div id="viewOfDesigns">
                 <h3>Design list:</h3>
                 <p>Designer: <span id="designersName"></span></p>
                 <p>Name: <span id="designName"></span></p>
+                <!--
+                <p>Hat: <span id="hattu"></span></p>
+                <p>Top: <span id="toppu"></span></p>
+                <p>Pants: <span id="pantsu"></span></p>
+                -->
                 
+                <ul>
+                    <li>
+                        <div>
+                            <img class="head" id="hattuImage"  src="img/head.png"/>
+                        </div>
+                    </li>
+                    <li>
+                        <div>
+                            <img class="torso" id="toppuImage"  src="img/torso.png"/>
+                        </div>
+                    </li> 
+                    <li>
+                        <div>
+                            <img class="legs" id="pantsuImage"  src="img/legs.png"/>
+                        </div>
+                    </li>
+                </ul>
+
             </div>
             
         </div>
@@ -237,7 +261,7 @@
                             <img class="dr2" id="pants0" src="img/legs1.png"/>
                             <img class="dr2" id="pants1" src="img/legs2.png"/>
                             <img class="dr2" id="pants2" src="img/legs3.png"/>
-                            <img class="dr2" id="pants4" src="img/legs4.png"/>
+                            <img class="dr2" id="pants3" src="img/legs4.png"/>
                         </div> 
 
                     </div> 

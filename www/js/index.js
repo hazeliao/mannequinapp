@@ -48,39 +48,123 @@ var app = {
 **************************************************/
 
 var designerIndex = 0;
+var designIndex = 0;
 
 $(function(){
   $( "#menu" ).on( "swipeleft", swipedLeft );
   $( "#menu" ).on( "swiperight", swipedRight );
  
   function swipedLeft( event ){
-      swipeDesign(1);
+      swipeNextDesign(1);
   }
     
   function swipedRight( event ){
-      swipeDesign(-1);
+      swipeNextDesign(-1);
   }
 });
 
-function swipeDesign( direction )
+function swipeNextDesign( direction )
 {
-    console.log("Should change text, user swiped to: " + direction);
-    
+    console.log("swipeNextDesign( direction: " + direction + " );");
+        
     var userList = getUserList();
     
+    //
+    //Does the current designer have more designs?
+    //
+    //If not, go to the next designer.
+    //
+    //If yes, display the next design.
+    //
+    //
+    var rawUser = window.localStorage.getItem(userList[designerIndex]);
+    var userData = JSON.parse(rawUser);
+    
+    console.log("userList.length: " + userList.length);
+    console.log("userData.designs.length: " + userData.designs.length);
+    if ( direction == 1 )
+    {
+         //If the current user has no more designs to show, check for the next designer.
+        if ( designIndex + 1 >= userData.designs.length )
+        {           
+            
+            //If no next user exists, go back to the first users designs.
+            if ( designerIndex + 1 >= userList.length )
+            {
+                designerIndex = 0;
+                designIndex = 0;
+            }
+            else
+            {
+                //Yes, another user does exist! Increase the target to the next designer and reset the design index.
+                designerIndex++;
+                designIndex = 0;
+            }
+
+        } else {
+            
+            //Current user still has designs to show! Increase designIndex
+            designIndex++;
+        }
+    }
+            
+    
+    if ( direction == -1 )
+    {
+        
+        //If the current user has no more designs to show in the negative space, decrement designer.
+        if ( designIndex - 1 < 0 )
+        {
+
+            //If we're at the start of the userList and trying to go backwards, go to the last one on the list.   
+            if ( designerIndex - 1 < 0 ) 
+            {
+                designerIndex = userList.length-1;
+                var lastUser = window.localStorage.getItem(userList[designerIndex]);
+                console.log("last user: " + userList[designerIndex]);
+                var lastUsersData = JSON.parse(lastUser);
+                designIndex = lastUsersData.designs.length - 1;
+            }
+            else
+            {
+                designerIndex--;//Go back one designer index as we are not at the end of the list.
+                var lastUser = window.localStorage.getItem(userList[designerIndex]);
+                console.log("last user: " + userList[designerIndex]);
+                var lastUsersData = JSON.parse(lastUser);
+                designIndex = lastUsersData.designs.length - 1;
+            }
+
+            
+        } else {
+            //Another design exists in the negative space, show it first before changing the designer.
+            designIndex--;
+        }
+        
+    }
+
+    
+    /*
     if ( designerIndex <= 0 && direction == -1 )
         return;
     if ( designerIndex >= userList.length-1 && direction == 1 )
         return;
-
-    designerIndex += direction; 
     
-    showDesigner(designerIndex);
+    designerIndex += direction; 
+    */
+    
+    showDesignersDesign(designerIndex, designIndex);
 }
 
-function showDesigner( designerIndexNow )
+function resetDesign()
 {
-    
+    window.localStorage.removeItem("container0");
+    window.localStorage.removeItem("container1");
+    window.localStorage.removeItem("container2");    
+}
+
+function showDesignersDesign( designerIndexNow, designIndexNow )
+{
+    console.log("showDesigner( " + designerIndexNow + " , " + designIndexNow + " )");
     /*
     var textarr = [];
     var userList = getUserList();
@@ -93,12 +177,67 @@ function showDesigner( designerIndexNow )
     }
     */
     
+    
+    //First, check if designer index should be increased?
+    //
+    //This depends on if the current designer has any more designs left to show.
+    //    
+        
     var userList = getUserList();
+    
+    if ( designerIndexNow > userList.length )
+    {
+        console.log("designerIndexNow index out of bounds.");
+        return;        
+    }
+
+    //{"nickname":"Donald Duck","password":"user1","designs":[{"name":"onetutu","hat":"hat1","top":"top2","pants":"pants2"},{"name":"no zu no dai","hat":"hat0","top":"top3","pants":"pants2"}]}
     var rawUser = window.localStorage.getItem(userList[designerIndexNow]);
     var userData = JSON.parse(rawUser);
     $('#designersName').text(""+userData.nickname);
-    $('#designName').text("xx");
     
+    if ( designIndexNow < userData.designs.length )
+    {
+        $('#designName').text(""+userData.designs[designIndexNow].name);
+        /*
+        $('#hattu').text(""+userData.designs[designIndexNow].hat);
+        $('#toppu').text(""+userData.designs[designIndexNow].top);
+        $('#pantsu').text(""+userData.designs[designIndexNow].pants);
+        */
+        
+        //Remove the 'hat' 'top' and 'pants' from the data to get pure numbers.
+        var hatIndex = parseInt(userData.designs[designIndexNow].hat.replace('hat',''), 10);
+        var topIndex = parseInt(userData.designs[designIndexNow].top.replace('top',''), 10);
+        var pantsIndex = parseInt(userData.designs[designIndexNow].pants.replace('pants',''), 10);
+         
+        $('#hattuImage').attr("src","img/head"+(hatIndex+1)+".png");
+        $('#toppuImage').attr("src","img/torso"+(topIndex+1)+".png");
+        $('#pantsuImage').attr("src","img/legs"+(pantsIndex+1)+".png");
+    } else {
+        
+        if ( userData.designs.length == 0 )
+        {
+            $('#designName').text("This user is currently designing...");
+            /*
+            $('#hattu').text("");
+            $('#toppu').text("");
+            $('#pantsu').text("");
+            */
+            $('#hattuImage').attr("src","img/head.png");
+            $('#toppuImage').attr("src","img/torso.png");
+            $('#pantsuImage').attr("src","img/legs.png");
+        } else {
+            $('#designName').text("index out of bounds.");
+            $('#hattuImage').attr("src","img/head.png");
+            $('#toppuImage').attr("src","img/torso.png");
+            $('#pantsuImage').attr("src","img/legs.png");
+            /*
+            $('#hattu').text("index out of bounds.");
+            $('#toppu').text("index out of bounds.");
+            $('#pantsu').text("index out of bounds.");
+            */
+        }
+    }
 }
 
 function getUserList()
@@ -114,9 +253,25 @@ function log( stepName )
     console.log("------------------------------");
 }
 
+function fblogoutSuccess()
+{
+    console.log("fblogoutSuccess");
+}
+
+function fblogoutFail()
+{
+    console.log("fblogoutFail");
+}
+
 function logout()
 {
     log("Logged out user: "+window.localStorage.getItem("loggedInUser"));
+    
+    if ( window.localStorage.getItem("isLoggedInWithFacebook") != 0 )
+    {
+        window.localStorage.removeItem("isLoggedInWithFacebook");
+        facebookConnectPlugin.logout(fblogoutSuccess, fblogoutFail);
+    }
     window.localStorage.removeItem("loggedInUser");
     location.hash = "#main";
 }
@@ -153,7 +308,7 @@ function localStorageLogin()
 
             location.hash = "#menu";
             
-            showDesigner(0);
+            showDesignersDesign(0,0);
             
         } else
 		{
@@ -312,8 +467,10 @@ function tryGoogleLogin()
 function loginSuccess(response)
 {
 	console.log("Login succeeded!");
-	console.log("response: ", response);
-	window.location.href = "#menu";
+	console.log("response: ", response);    
+    createNewUser(response.authResponse.userID, response.authResponse.userID, response.authResponse.userID);
+    
+	//window.location.href = "#menu";
 }
 
 function loginFail(response)
@@ -325,8 +482,12 @@ function loginFail(response)
 
 function doFacebookLogin()
 {
+    if (window.cordova.platformId == "browser") {
+        facebookConnectPlugin.browserInit(208554899623511);
+    }
 	console.log("Doing facebook login!");
 	facebookConnectPlugin.login(["email"], loginSuccess, loginFail);
+    window.localStorage.setItem("isLoggedInWithFacebook", "yeees");
 }
 
 
@@ -339,9 +500,14 @@ function saveTheDesign()
     var hat = window.localStorage.getItem("container0");
     var top = window.localStorage.getItem("container1");
     var pants = window.localStorage.getItem("container2");
-    
     var designName = document.getElementById("designNameToSave").value;
-        
+    
+    if ( hat == null || top == null || pants == null || designName == null)
+    {
+        alert("You haven't finished your design, did you remember to name it and select all 3 pieces?");
+        return;
+    }
+    
     console.log("Saving the selections:"+
                 " hat: " + hat +
                 " top: " + top +
@@ -374,10 +540,6 @@ function saveTheDesign()
     
     window.location.href = "#menu";
 }
-
-
-
-
 
 $(document).ready(function(){           
    
@@ -456,8 +618,8 @@ if(navigator.geolocation){
             })
             .done(function(data){
                 $("#weather").attr("src",data.url);
-                $("#weatherIcon").attr("src","http://openweathermap.org/img/w/"+data.weather[0].icon+".png");                
-                            })
+                $("#weatherIcon").attr("src","http://openweathermap.org/img/w/"+data.weather[0].icon+".png");
+            })
         };
 
 
@@ -519,6 +681,8 @@ $('ul li div').on("dragenter dragover drop", function (event) {
 	};            
 });
 */
+
+/* Does nothing, just for text printing.
 $('#savedata').on("click", function(event){
 	
 	for(i=0;i<localStorage.length;i++){
@@ -526,6 +690,7 @@ $('#savedata').on("click", function(event){
 	};           
 				
 });
+*/
 	
 
 $(document).on("pagecreate", function() {
