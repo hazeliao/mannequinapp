@@ -703,9 +703,8 @@ $(document).ready(function(){
 	}	
     
 	$('li a').on("click",function() {
-		
-        console.log("EVE");
-		console.log("click: ", $(this).attr('href'));
+
+		//DEBUG//console.log("click: ", $(this).attr('href'));
 		
 		for(var i = 0; i < 10; i++){
 			
@@ -731,16 +730,15 @@ $(document).ready(function(){
 $(function(){
     //var clicked = 0;
     $('#list div img').on("click", function(){
-        console.log("ADAM");
         var listNumber = $(this).attr('class').replace(/[^\d.]/g,'');
         console.log("listnumber:", listNumber);
         var trial = $(this).attr('src');      
-        console.log(trial);
+        //DEBUG//console.log(trial);
        /* clicked++;
         if ( clicked >= 2){*/
         $('#container'+listNumber).attr("src", trial);
         var data = $(this).attr('id');
-        console.log(data);
+        //DEBUG//console.log(data);
         window.localStorage.setItem("container"+listNumber, data);
             //clicked=0;
        // } 
