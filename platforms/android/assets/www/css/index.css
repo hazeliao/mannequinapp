@@ -20,6 +20,7 @@
     -webkit-tap-highlight-color: rgba(0,0,0,0); /* make transparent link selection, adjust last value opacity 0 to 1.0 */
 }
 
+
 body {
     -webkit-touch-callout: none;                /* prevent callout to copy image, etc when tap to hold */
     -webkit-text-size-adjust: none;             /* prevent webkit from resizing text to fit */
@@ -139,32 +140,66 @@ a {
     content: "";
 } 
 
-img {
-    height: 50px;
-    width: 50px;
-}
-
 
 li {
     display: inline;
    }
 
-.imgBigger {
-    height:200px;
-    width: 200px;
-    display: block;
-    margin: 0 auto;
+.dr0, .dr1 {
+    max-width:100%;
+    max-height:100%;
 }
-/*
-#list div img:hover{
-    color: #424242; 
-    -webkit-transition: all .3s ease-in;
-    -moz-transition: all .3s ease-in;
-    -ms-transition: all .3s ease-in;
-    -o-transition: all .3s ease-in;
-    transition: all .3s ease-in;
-    opacity: 1;
-    transform: scale(2.15);
-    -ms-transform: scale(2.15); IE 9 
-    -webkit-transform: scale(2.15);  Safari and Chrome 
-}*/
+.dr2{
+    max-width:60%;
+    max-height:60%;
+}
+
+/****************************************************************************************************
+ *
+ *  Body container in design screen.
+ *
+ ****************************************************************************************************/
+.head
+{
+    margin-bottom: -5px;
+    max-width:100%;
+    max-height:100%;
+}
+.torso
+{
+    max-width:100%;
+    max-height:100%;
+}
+.legs
+{
+    margin-top: -5px;
+    max-width:100%;
+    max-height:100%;
+}
+
+/****************************************************************************************************
+ *
+ *  Design selections.
+ *
+ ****************************************************************************************************/
+
+.parentX {
+    padding: 0;
+   height: 100%;
+    width: 100%;
+    margin: 0;
+}
+.narrowX {
+    padding: 0;
+    margin: 0;
+    width: 30%;
+    float: right;
+    
+}
+.wideX {
+    padding: 0;
+    margin: 0;
+    width: 70%;
+    float:left; 
+
+}

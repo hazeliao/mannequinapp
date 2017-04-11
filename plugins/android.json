@@ -7,12 +7,12 @@
         "files": {}
     },
     "installed_plugins": {
-        "cordova-plugin-whitelist": {
-            "PACKAGE_NAME": "com.shanliao.mannequinapp"
-        },
         "cordova-plugin-facebook4": {
             "APP_ID": "208554899623511",
             "APP_NAME": "MobileTest",
+            "PACKAGE_NAME": "com.shanliao.mannequinapp"
+        },
+        "cordova-plugin-whitelist": {
             "PACKAGE_NAME": "com.shanliao.mannequinapp"
         },
         "cordova-plugin-googleplus": {

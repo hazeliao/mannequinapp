@@ -20,8 +20,8 @@ module.exports = [
 module.exports.metadata = 
 // TOP OF METADATA
 {
-    "cordova-plugin-whitelist": "1.3.2",
     "cordova-plugin-facebook4": "1.7.4",
+    "cordova-plugin-whitelist": "1.3.2",
     "cordova-plugin-googleplus": "5.1.1"
 };
 // BOTTOM OF METADATA

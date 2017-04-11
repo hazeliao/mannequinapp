@@ -198,7 +198,9 @@ function showDesignersDesign( designerIndexNow, designIndexNow )
     
     if ( designIndexNow < userData.designs.length )
     {
-        $('#designName').text(""+userData.designs[designIndexNow].name);
+        if ( designIndexNow < userData.designs.length )
+            if ( userData.designs[designIndexNow].name )
+                $('#designName').text(""+userData.designs[designIndexNow].name);
         /*
         $('#hattu').text(""+userData.designs[designIndexNow].hat);
         $('#toppu').text(""+userData.designs[designIndexNow].top);
@@ -267,10 +269,21 @@ function logout()
 {
     log("Logged out user: "+window.localStorage.getItem("loggedInUser"));
     
-    if ( window.localStorage.getItem("isLoggedInWithFacebook") != 0 )
+    if ( window.localStorage.getItem("isLoggedInWithFacebook") !== null )
     {
         window.localStorage.removeItem("isLoggedInWithFacebook");
         facebookConnectPlugin.logout(fblogoutSuccess, fblogoutFail);
+    }
+    
+    if ( window.localStorage.getItem("isLoggedInWithGoogle") !== null )
+    {
+        window.localStorage.removeItem("isLoggedInWithGoogle");
+        window.plugins.googleplus.logout(
+            function (msg) {
+              console.log("GOOGLE LOGOUT: ", msg);
+            }
+        );
+
     }
     window.localStorage.removeItem("loggedInUser");
     location.hash = "#main";
@@ -299,16 +312,15 @@ function localStorageLogin()
 		if ( loginPassword == userDataObject.password )
 		{
             console.log("Yay ! Passwords match!");
-            $('#userNameLoggedIn').text(""+userDataObject.nickname);
             
-            window.localStorage.setItem("loggedInUser", loginEmail);
-
-            //This won't add the user twice if it already is found on the list.
-            addUserToUsersList( loginEmail );
-
-            location.hash = "#menu";
+            var loginDataObject = {};
+            loginDataObject.email = loginEmail;
+            loginDataObject.password = userDataObject.password;
+            loginDataObject.nickName = userDataObject.nickname;
+            loginDataObject.google = false;
+            loginDataObject.facebook = false;
             
-            showDesignersDesign(0,0);
+            finalizeLogin(loginDataObject);
             
         } else
 		{
@@ -397,36 +409,82 @@ function registerNewUser() {
 
     log("Creating a new user...");
 
+    
+    var loginDataObject         = {};
+    loginDataObject.email       = emailUserWants;
+    loginDataObject.password    = passwordUserEntered;
+    loginDataObject.nickName    = nickNameUserWants;
+    loginDataObject.google      = false;
+    loginDataObject.facebook    = true;
+
+    //
+	//	Register & Login a new user with the now valid user email (it has passed all the checks!)
 	//
-	//	Register a new user with the now valid user email (it has passed all the checks!)
-	//
-	createNewUser(nickNameUserWants, emailUserWants, passwordUserEntered);
+    finalizeLogin( loginDataObject );
+    
 }
 
+//NOTE: This function should only be called from finalizeLogin(...)
 function createNewUser(nickname, email, password)
 {
-
 	var userDataObject = {}
-
 	userDataObject.nickname = nickname;
 	userDataObject.password = password;
 	userDataObject.designs = [];
-
-	console.log(userDataObject);
+	console.log("Creating new user with data: ", userDataObject);
     addUserToUsersList( email );
     window.localStorage.setItem(email, JSON.stringify(userDataObject));
-    window.localStorage.setItem("loggedInUser", email);
-    location.hash = "#menu";
 }
 
 function doesEmailExistInLocalStorage(userEmailToCheck)
 {
 	var userEmail = window.localStorage.getItem(userEmailToCheck);
 
-    console.log("doesEmailExistInLocalStorage: ", userEmail);
+    console.log("doesEmailExistInLocalStorage: " + userEmail + " ? " + ( userEmail ? "TRUE" : "FALSE" ) + " ");
 
     //Returns that the email is available if anything the key exists in localStorage.
 	return userEmail ? true : false;
+}
+
+/****************************************
+
+        All Logins
+        
+*****************************************/
+
+function finalizeLogin( loginDataObject )
+{
+    /*
+        loginDataObject.email       STRING
+        loginDataObject.password    STRING
+        loginDataObject.nickName    STRING
+        loginDataObject.google      BOOL
+        loginDataObject.facebook    BOOL
+    */
+    
+    if ( loginDataObject.google === true )
+    {
+        window.localStorage.setItem("isLoggedInWithGoogle", "yeees");
+    } else if ( loginDataObject.facebook === true )
+    {
+        window.localStorage.setItem("isLoggedInWithFacebook", "yeees");
+    }
+
+    if ( doesEmailExistInLocalStorage( loginDataObject.email ) === false )
+    {
+        console.log("NEW USER DETECTED, CREATING NEW DATABASE ENTRY!");
+        createNewUser( loginDataObject.nickName, loginDataObject.email, loginDataObject.password );
+    }
+
+    console.log("FINALIZING LOGIN...");
+    
+    $('#userNameLoggedIn').text(""+loginDataObject.nickName);
+    window.localStorage.setItem("loggedInUser", loginDataObject.email);
+
+    location.hash = "#menu";
+    
+    showDesignersDesign(0,0);
+
 }
 
 
@@ -439,19 +497,35 @@ function doesEmailExistInLocalStorage(userEmailToCheck)
 function tryGoogleLogin()
 {
 
+    /*
+		Installation steps to avoid bugs:
+        cordova plugin rm cordova-plugin-googleplus
+		cordova plugin add https://github.com/EddyVerbruggen/cordova-plugin-googleplus --variable REVERSED_CLIENT_ID=com.googleusercontent.apps.583206289891-eokrhgg2ignd47uqnqg3c95didpei892
+    */
 	window.plugins.googleplus.login(
 		{
-		  'scopes': '', // optional, space-separated list of scopes, If not included or empty, defaults to `profile` and `email`.
-		  'webClientId': '583206289891-eokrhgg2ignd47uqnqg3c95didpei892.apps.googleusercontent.com', // optional clientId of your Web application from Credentials settings of your project - On Android, this MUST be included to get an idToken. On iOS, it is not required.
-		  'offline': true, // optional, but requires the webClientId - if set to true the plugin will also return a serverAuthCode, which can be used to grant offline access to a non-Google server
-		},
+            scopes: 'profile email',
+            webClientId: '583206289891-eokrhgg2ignd47uqnqg3c95didpei892.apps.googleusercontent.com',
+            offline: true
+	   },
 		function (obj) {
+            console.log("GOOGLE LOGIN RESULTS:");
 			console.log(obj);
-			window.location.href = "#menu";
-		  //alert(JSON.stringify(obj)); // do something useful instead of alerting
+            
+            var loginDataObject         = {};
+            loginDataObject.email       = obj.email;
+            loginDataObject.password    = obj.userId;
+            loginDataObject.nickName    = obj.displayName;
+            loginDataObject.google      = true;
+            loginDataObject.facebook    = false;
+
+            finalizeLogin( loginDataObject );
+
+            //window.location.href = "#menu";
+            //alert(JSON.stringify(obj)); // do something useful instead of alerting
 		},
 		function (msg) {
-		  alert('error: ' + msg);
+		  alert('error with google login: ' + msg);
 		}
 	);
 };
@@ -463,17 +537,22 @@ function tryGoogleLogin()
         
 *****************************************/
 
-
-function loginSuccess(response)
+function fbloginSuccess(response)
 {
 	console.log("Login succeeded!");
-	console.log("response: ", response);    
-    createNewUser(response.authResponse.userID, response.authResponse.userID, response.authResponse.userID);
+	console.log("response: ", response);  
     
-	//window.location.href = "#menu";
+    var loginDataObject         = {};
+    loginDataObject.email       = response.authResponse.userID;
+    loginDataObject.password    = response.authResponse.userID;
+    loginDataObject.nickName    = response.authResponse.userID;
+    loginDataObject.google      = false;
+    loginDataObject.facebook    = true;
+
+    finalizeLogin( loginDataObject );//window.location.href = "#menu";
 }
 
-function loginFail(response)
+function fbloginFail(response)
 {
 	console.log("Login failed!");
 	console.log("response: ", response);
@@ -486,12 +565,9 @@ function doFacebookLogin()
         facebookConnectPlugin.browserInit(208554899623511);
     }
 	console.log("Doing facebook login!");
-	facebookConnectPlugin.login(["email"], loginSuccess, loginFail);
+	facebookConnectPlugin.login(["email"], fbloginSuccess, fbloginFail);
     window.localStorage.setItem("isLoggedInWithFacebook", "yeees");
 }
-
-
-
 
 function saveTheDesign()
 {
@@ -551,7 +627,7 @@ $(document).ready(function(){
 	  
 	$('li a').on("click",function(){
 		
-		console.log("xx", $(this).attr('href'));
+		console.log("click: ", $(this).attr('href'));
 		
 		for(var i = 0; i < 10; i++){
 			
@@ -606,7 +682,10 @@ if(navigator.geolocation){
         };
 
         function showError(msg){
-           weatherDiv.addClass('error').html(msg);
+            console.log("Error with weather: ", msg);
+            //if ( weatherDiv )
+            //    weatherDiv.addClass('error').html(msg);
+
         };
 
         function fetchWeather(lan, lon){            
@@ -621,7 +700,6 @@ if(navigator.geolocation){
                 $("#weatherIcon").attr("src","http://openweathermap.org/img/w/"+data.weather[0].icon+".png");
             })
         };
-
 
 /**************************************************
 

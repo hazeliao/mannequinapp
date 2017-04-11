@@ -51,12 +51,15 @@
     <script type="text/javascript" src="cordova.js"></script>
     
     <link rel="stylesheet" href="css/themes/myTheme.min.css" />
-    <link rel="stylesheet" href="css/themes/jquery.mobile.icons.min.css" />  
+    <link rel="stylesheet" href="css/themes/jquery.mobile.icons.min.css" />
+
+    <script type="text/javascript" src="js/index.js"></script>
 
     <title>Mannequin</title>
 </head>
 
 <body>
+    <div id="fb-root"></div>
     <!-- Start of first page -->
     <div data-role="page" id="main">
         <div data-role="header">
@@ -69,13 +72,13 @@
                 <form>
                     <div style="padding:10px 20px;">
                         <h3>Please sign in</h3>
-                        <label for="un" class="ui-hidden-accessible">Username:</label>
-                        <input type="text" name="user" id="un" value="" placeholder="username" data-theme="a">
-                        <label for="pw" class="ui-hidden-accessible">Password:</label>
-                        <input type="password" name="pass" id="pw" value="" placeholder="password" data-theme="a">
+                        <label for="loginEmail" class="ui-hidden-accessible">Username:</label>
+                        <input type="text" name="user" id="loginEmail" value="" placeholder="Email" data-theme="a">
+                        <label for="loginPassword" class="ui-hidden-accessible">Password:</label>
+                        <input type="password" name="pass" id="loginPassword" value="" placeholder="Password" data-theme="a">
                         <a onclick="doFacebookLogin();" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ">login with Facebook</a>
                         <a onclick="tryGoogleLogin();" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ">login with Google account</a>
-                        <a href="#menu" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left">Sign in</a>
+                        <a onclick="localStorageLogin();" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left">Sign in</a>
                     </div>
                 </form>
             </div>
@@ -89,16 +92,25 @@
     <div data-role="page" id="signup">
         <div data-role="header">            
             <h1>Mannequin</h1>
+            
+            <a href="#main" class="ui-btn ui-corner-all ui-btn-inline ui-icon-carat-l ui-btn-icon-notext" ></a>
         </div>
         <div role="main" class="ui-content">
-            <form  style="width:90%; display: block; margin-left: auto; margin-right: auto;">
+            <form id="registerForm" style="width:90%; display: block; margin-left: auto; margin-right: auto;" onsubmit="return registerNewUser();">
                 <br>
-                Nickname: <input type="text" id="nickname">
-                Firstname: <input type="text" id="firstname">
-                Surname: <input type="text" id="surname">
-                Email: <input type="text" id="email">            
-                <a href="#menu" id="signup" class="ui-btn ui-corner-all ui-btn-inline ">Save</a>
+                Email: <input type="email" id="createEmail" maxlength="64" placeholder="Email" required>
+                Password: <input type="password" id="createPassword" minlength="3"  maxlength="12" placeholder="Password" required>
+                Nickname: <input type="text" id="createNickname" minlength="3" maxlength="20" placeholder="Username" required>
+                <button type="submit" class="ui-btn ui-corner-all ui-btn-inline "id="createNewAccount">Create Account</button>
             </form>
+
+            <br/>
+            <!-- ADMIN functionality
+            <form  style="width:90%; display: block; margin-left: auto; margin-right: auto;">
+                <input type="email" id="userEmailToDelete" placeholder="Write email to delete from user database">
+                <button type="button" onclick="deleteUser();" class="ui-btn ui-corner-all ui-btn-inline "id="deleteUserButton">Delete user</button>
+            </form>
+            -->
         </div>
         
     </div>
@@ -106,30 +118,71 @@
     <!-- Start of menu page -->
     <div data-role="page" id="menu">
         <div data-role="header">
-              
-            <h1>Mannequin</h1>
+
+            <h1>Mannequin <br/> Welcome <span id="userNameLoggedIn"></span></h1>
+            <!-- <a href="#menu" class="ui-btn ui-corner-all ui-btn-inline ui-icon-power ui-btn-icon-notext"></a> -->
+            <a href="#logout" class="ui-btn ui-corner-all ui-btn-inline ui-icon-carat-l ui-btn-icon-notext" data-rel="popup" data-position-to="slideup" data-transition="pop"></a>
+            <div data-role="popup" id="logout" data-theme="a" class="ui-corner-all">
+                <form>
+                    <div style="padding:10px 20px;">
+                        <h3>Logout?</h3>
+                        <a onclick="logout();" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ">yes</a>
+                        <a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ">no</a>
+                    </div>
+                </form>
+            </div>
         </div>
         <div role="main" class="ui-content">
-            <a href="#show" class="ui-btn ui-corner-all ui-shadow ">Start your own design</a>
-            <a href="#demos" class="ui-btn ui-corner-all ui-shadow ">View previews designs</a>
+            <a href="#show" onclick="resetDesign();" class="ui-btn ui-corner-all ui-shadow ">Start your own design</a>
+            <!--<a href="#demos" class="ui-btn ui-corner-all ui-shadow ">View previous designs</a> -->
+            
+            <div id="viewOfDesigns">
+                <h3>Design list:</h3>
+                <p>Designer: <span id="designersName"></span></p>
+                <p>Name: <span id="designName"></span></p>
+                <!--
+                <p>Hat: <span id="hattu"></span></p>
+                <p>Top: <span id="toppu"></span></p>
+                <p>Pants: <span id="pantsu"></span></p>
+                -->
+                
+                <ul>
+                    <li>
+                        <div>
+                            <img class="head" id="hattuImage"  src="img/head.png"/>
+                        </div>
+                    </li>
+                    <li>
+                        <div>
+                            <img class="torso" id="toppuImage"  src="img/torso.png"/>
+                        </div>
+                    </li> 
+                    <li>
+                        <div>
+                            <img class="legs" id="pantsuImage"  src="img/legs.png"/>
+                        </div>
+                    </li>
+                </ul>
+
+            </div>
+            
         </div>
-        
     </div>
     
     <!-- Start of game page -->
     <div data-role="page" data-theme="c" id="show">         
         <div data-role="header" data-theme="a" data-position="fixed">
 		    <h1>Dress up</h1>
-            <a href="#menu" class="ui-btn ui-corner-all ui-btn-inline ui-icon-home ui-btn-icon-notext"></a>
+            <a href="#menu" class="ui-btn ui-corner-all ui-btn-inline ui-icon-carat-l ui-btn-icon-notext"></a>
             <a href="#saveGame" id="savedata" data-rel="popup" data-position-to="slideup"  data-transition="pop" class="ui-btn ui-corner-all ui-btn-inline ">Save</a>
         </div>      
         <div data-role="popup" id="saveGame" data-theme="a" class="ui-corner-all">
                 <form>
                     <div style="padding:10px 20px;">
-                        <h4>Your selections save as:</h4>
-                        <input type="text" name="user" id="pn" value="" placeholder="picture name" data-theme="a">
-                        <a href="#menu" class="ui-btn ui-corner-all ui-btn-inline">Yes</a>
-                        <a href="#" class="ui-btn ui-corner-all ui-btn-inline">No</a>
+                        <h4>Save your design as:</h4>
+                        <input type="text" name="user" id="designNameToSave" value="" placeholder="design name" data-theme="a">
+                        <a href="#" onclick="saveTheDesign();" class="ui-btn ui-corner-all ui-btn-inline">Yes</a>
+                        <a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ">No</a>
                     </div>
                 </form>
         </div>
@@ -141,136 +194,82 @@
                         <ul id="content-container">
                             <li><a href="#list0">Hat</a></li>
                             <li><a href="#list1">Top</a></li>
-                            <li><a href="#list2">Pants</a></li>
-    <!--
-                            <li><a href="#list3">Dress</a></li>
-                            <li><a href="#list4">Shoes</a></li>
-    -->
+                            <li><a href="#list2">Pants</a></li> 
                         </ul>
                     </div>  
                 </nav>
             </div>
-            <div id="list">          
-                <div id="list0" style="position: relative; top: 8px; left: 16px;">
-                    <a href="#popuphat0" data-rel="popup" data-postion-to="window" data-transition="slide">
-                        <img class="dr0" id="hat0" src="img/hat1.png" />
-                    </a>
-                    <a href="#popuphat1" data-rel="popup" data-postion-to="window" data-transition="slide">
-                        <img class="dr0" id="hat1" src="img/hat2.png"/>
-                    </a>
-                    <a href="#popuphat2" data-rel="popup" data-postion-to="window" data-transition="slide">
-                        <img class="dr0" id="hat2" src="img/hat3.png"/> 
-                    </a>
-                    <div data-role="popup" id="popuphat0" data-position-to="window" data-overlay-theme="b" data-theme="b" data-corners="false">
-                        <img class="dr0" id="hat0" style="width:200px;height:200px;" src="img/hat1.png" alt="hat1"/> 
-                    </div>
-                    <div data-role="popup" id="popuphat1" data-position-to="window" data-overlay-theme="b" data-theme="b" data-corners="false">
-                        <img class="dr0" id="hat1" style="width:200px;height:200px;" src="img/hat2.png" alt="hat2"/> 
-                    </div>
-                    <div data-role="popup" id="popuphat2" data-position-to="window" data-overlay-theme="b" data-theme="b" data-corners="false">
-                        <img class="dr0" id="hat2" style="width:200px;height:200px;" src="img/hat3.png" alt="hat3"/> 
-                    </div>
-                    
-                </div>     
+            
+            <div class="parentX">
+                <div class="wideX">
+                    <ul id="bodyContainer">
+                        <li>
+                            <div id="weather">                
+                                <img id ="weatherIcon" src="">                
+                            </div>
+                        </li>
+                        <li>
+                            <div>
+                                <img class="head" id="container0"  src="img/head.png"/>
+                            </div>
+                        </li>
+                        <li>
+                            <div>
+                                <img class="torso" id="container1"  src="img/torso.png"/>
+                            </div>
+                        </li> 
+                        <li>
+                            <div>
+                                <img class="legs" id="container2"  src="img/legs.png"/>
+                            </div>
+                        </li>
 
-                <div id="list1" style="position: relative; top: 8px; left: 16px;">
-                    <a href="#popuptop0" data-rel="popup" data-postion-to="window" data-transition="slide">
-                        <img class="dr1" id="top0" src="img/top1.png"/>
-                    </a>
-                    <a href="#popuptop1" data-rel="popup" data-postion-to="window" data-transition="slide">
-                        <img class="dr1" id="top1" src="img/top2.png"/>
-                    </a>
-                    <a href="#popuptop2" data-rel="popup" data-postion-to="window" data-transition="slide">
-                        <img class="dr1" id="top2" src="img/top3.png"/>
-                    </a>
-                    <div data-role="popup" id="popuptop0" data-position-to="window" data-overlay-theme="b" data-theme="b" data-corners="false">                        
-                        <img class="dr1" id="top0" style="width:200px;height:200px;" src="img/top1.png" alt="top1"/> 
-                    </div>
-                    <div data-role="popup" id="popuptop1" data-position-to="window" data-overlay-theme="b" data-theme="b" data-corners="false">                        
-                        <img class="dr1" id="top1" style="width:200px;height:200px;" src="img/top2.png" alt="top2"/> 
-                    </div>
-                    <div data-role="popup" id="popuptop2" data-position-to="window" data-overlay-theme="b" data-theme="b" data-corners="false">                        
-                        <img class="dr1" id="top2" style="width:200px;height:200px;" src="img/top3.png" alt="top3"/> 
-                    </div>
-                </div> 
-                <div id="list2" style="position: relative; top: 8px; left: 16px;">
-                    <a href="#popuppants0" data-rel="popup" data-postion-to="window" data-transition="slide">
-                        <img class="dr2" id="pants0" src="img/pants1.png"/>
-                    </a>
-                    <a href="#popuppants1" data-rel="popup" data-postion-to="window" data-transition="slide">
-                        <img class="dr2" id="pants1" src="img/pants2.png"/>
-                    </a>
-                    <a href="#popuppants2" data-rel="popup" data-postion-to="window" data-transition="slide">
-                        <img class="dr2" id="pants2" src="img/pants3.png"/>
-                    </a>
-                    <div data-role="popup" id="popuppants0" data-position-to="window" data-overlay-theme="b" data-theme="b" data-corners="false">                        
-                        <img class="dr1" id="top0" style="width:200px;height:200px;" src="img/pants1.png" alt="pants1"/> 
-                    </div>
-                    <div data-role="popup" id="popuppants1" data-position-to="window" data-overlay-theme="b" data-theme="b" data-corners="false">                        
-                        <img class="dr1" id="pants1" style="width:200px;height:200px;" src="img/pants2.png" alt="pants2"/> 
-                    </div>
-                    <div data-role="popup" id="popuppants2" data-position-to="window" data-overlay-theme="b" data-theme="b" data-corners="false">
-<!--                        <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>-->
-                        <img class="dr1" id="pants2" style="width:200px;height:200px;" src="img/pants3.png" alt="pants3"/> 
-                    </div>
-                </div> 
-<!--
-                <div id="list3" style="postion: relative; top: 8px; left: 16px;">
-                    <img class="dr3" id="dress1" src="http://placekitten.com/127/127">
-                    <img class="dr3" id="dress2" src="http://placekitten.com/131/131">
-                    <img class="dr3" id="dress3" src="http://placekitten.com/133/133">
-                </div> 
-                <div id="list4" style="postion: relative; top: 8px; left: 16px;">
-                    <img class="dr4" id="shoes1" src="http://placekitten.com/129/129">
-                    <img class="dr4" id="shoes2" src="http://placekitten.com/130/130">
-                    <img class="dr4" id="shoes3" src="http://placekitten.com/132/132">
-                </div> 
-                <div id="list5" style="postion: relative; top: 8px; left: 16px;">
-                    <img class="dr5" id="test1" src="http://placekitten.com/127/127">
-                    <img class="dr5" id="test2" src="http://placekitten.com/131/131">
-                    <img class="dr5" id="test3" src="http://placekitten.com/133/133">
-                </div> 
-                
--->
-            </div> 
+                    </ul> 
+                </div>
+                <div class="narrowX">
+                    <div id="list">          
+                        <div id="list0" >
+        <!--                <a href="#popuphat0" data-rel="popup" data-position-to="window" data-transition="slide">-->
+                            <img class="dr0" id="hat0" src="img/head1.png" />
+                            <img class="dr0" id="hat1" src="img/head2.png"/>
+                            <img class="dr0" id="hat2" src="img/head3.png"/>
+                            <img class="dr0" id="hat3" src="img/head4.png"/>
+                            <img class="dr0" id="hat4" src="img/head5.png"/>
 
-            <ul id="bodayContainer">
-                <li>
-                    <div style="background-color: yellow; height: 50px; width: 50px; top:0px; right:350px;">
-                        <img id="container0"  src="img/hat2.png"/>
-                    </div>
-                </li>
-                <li>
-                    <div style="background-color: #09F;	height: 50px; width: 50px; top:0px; right:0px;">
-                        <img id="container1"  src="img/top2.png"/>
-                    </div>
-                </li> 
+        <!--
+                            <div data-role="popup" id="popuphat0" data-position-to="window" data-overlay-theme="b" data-theme="b" data-corners="false">
+                                <img class="dr00" src="img/head1.png" alt="hat1"/> 
+                            </div>
+                            <div data-role="popup" id="popuphat1" data-position-to="window" data-overlay-theme="b" data-theme="b" data-corners="false">
+                                <img class="dr00" src="img/head2.png" alt="hat2"/> 
+                            </div>
+                            <div data-role="popup" id="popuphat2" data-position-to="window" data-overlay-theme="b" data-theme="b" data-corners="false">
+                                <img class="dr00" src="img/head3.png" alt="hat3"/> 
+                            </div>
+        -->
 
-                <li>
-                    <div style="background-color: red; height: 50px; width: 50px; top:0px; right:350px;">
-                        <img id="container2"  src="img/pants2.png"/>
-                    </div>
-                </li>
+                        </div>     
 
-<!--
-                <li>
-                    <div id="container3" style="background-color: orange; height: 50px; width: 50px; top:0px; right:350px;">
+                        <div id="list1"class="designerSelectionBar">
+                            <img class="dr1" id="top0" src="img/torso1.png"/>
+                            <img class="dr1" id="top1" src="img/torso2.png"/>
+                            <img class="dr1" id="top2" src="img/torso3.png"/>
+                            <img class="dr1" id="top3" src="img/torso4.png"/>
+                        </div> 
+                        
+                        <div id="list2" class="designerSelectionBar">
+                            <img class="dr2" id="pants0" src="img/legs1.png"/>
+                            <img class="dr2" id="pants1" src="img/legs2.png"/>
+                            <img class="dr2" id="pants2" src="img/legs3.png"/>
+                            <img class="dr2" id="pants3" src="img/legs4.png"/>
+                        </div> 
 
-                    </div>
-                </li>
-                <li>
-                    <div id="container4" style="background-color: green; height: 50px; width: 50px; top:0px; right:350px;">
-
-                    </div>
-                </li>
--->
-            </ul>
+                    </div> 
+                </div>
+            </div>
+            
         </div>
     </div>
-    
-    <script type="text/javascript" src="js/index.js"></script>
-
-        
 </body>
 
 </html>
