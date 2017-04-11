@@ -34,11 +34,14 @@ var app = {
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
+        //console.log("device.cordova: ", device.cordova);
+        console.log("cordova-plugin-device: device.platform: ", device.platform);
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
         
     }
+
 };
 
 /**********************************************
@@ -153,13 +156,6 @@ function swipeNextDesign( direction )
     */
     
     showDesignersDesign(designerIndex, designIndex);
-}
-
-function resetDesign()
-{
-    window.localStorage.removeItem("container0");
-    window.localStorage.removeItem("container1");
-    window.localStorage.removeItem("container2");    
 }
 
 function showDesignersDesign( designerIndexNow, designIndexNow )
@@ -502,6 +498,7 @@ function tryGoogleLogin()
         cordova plugin rm cordova-plugin-googleplus
 		cordova plugin add https://github.com/EddyVerbruggen/cordova-plugin-googleplus --variable REVERSED_CLIENT_ID=com.googleusercontent.apps.583206289891-eokrhgg2ignd47uqnqg3c95didpei892
     */
+    
 	window.plugins.googleplus.login(
 		{
             scopes: 'profile email',
@@ -537,6 +534,16 @@ function tryGoogleLogin()
         
 *****************************************/
 
+function doFacebookLogin()
+{
+    if (window.cordova.platformId == "browser") {
+        facebookConnectPlugin.browserInit(208554899623511);
+    }
+	console.log("Doing facebook login!");
+	facebookConnectPlugin.login(["email"], fbloginSuccess, fbloginFail);
+    window.localStorage.setItem("isLoggedInWithFacebook", "yeees");
+}
+
 function fbloginSuccess(response)
 {
 	console.log("Login succeeded!");
@@ -558,92 +565,6 @@ function fbloginFail(response)
 	console.log("response: ", response);
 	alert("error loggin in :(");
 }
-
-function doFacebookLogin()
-{
-    if (window.cordova.platformId == "browser") {
-        facebookConnectPlugin.browserInit(208554899623511);
-    }
-	console.log("Doing facebook login!");
-	facebookConnectPlugin.login(["email"], fbloginSuccess, fbloginFail);
-    window.localStorage.setItem("isLoggedInWithFacebook", "yeees");
-}
-
-function saveTheDesign()
-{
-    console.log("Saving the design! !");
-    
-    var hat = window.localStorage.getItem("container0");
-    var top = window.localStorage.getItem("container1");
-    var pants = window.localStorage.getItem("container2");
-    var designName = document.getElementById("designNameToSave").value;
-    
-    if ( hat == null || top == null || pants == null || designName == null)
-    {
-        alert("You haven't finished your design, did you remember to name it and select all 3 pieces?");
-        return;
-    }
-    
-    console.log("Saving the selections:"+
-                " hat: " + hat +
-                " top: " + top +
-                " pants: " + pants +
-                " designName: " + designName);
-                                    
-    
-    var loggedInUsername = window.localStorage.getItem("loggedInUser");
-    
-    if ( !loggedInUsername )
-    {
-        console.log("Error, currently logged in username did not exist or was invalid!");
-        return;
-    }
-
-    var rawUserData = window.localStorage.getItem( loggedInUsername );
-    var parsedUserData = JSON.parse(rawUserData);
-
-    var designObject = {};
-    
-    designObject.name = designName;
-    designObject.hat = hat;
-    designObject.top = top;
-    designObject.pants = pants;
-    
-    //Insert to the last item of the list, the new designObject, so the list automatically grows.
-    parsedUserData.designs.push(designObject);
-    
-    window.localStorage.setItem( loggedInUsername, JSON.stringify(parsedUserData));
-    
-    window.location.href = "#menu";
-}
-
-$(document).ready(function(){           
-   
-	for(var j=0; j<10; j++){
-		if(j!=0){
-			$('#list'+ j).hide();
-		}
-	}		 
-	  
-	$('li a').on("click",function(){
-		
-		console.log("click: ", $(this).attr('href'));
-		
-		for(var i = 0; i < 10; i++){
-			
-			if($(this).attr('href') == '#list'+i){
-			  // alert($(this).attr('href'));
-				$('#list'+ i +'').show();                    
-				$('#container'+ i +'').prop('disabled',false);
-			} else {
-				 $('#container'+ i +'').prop('disabled',true);
-				$('#list'+i+'').hide();
-			}                
-		}
-
-	});
-
-});
 
 /***********************************************
 
@@ -707,18 +628,117 @@ if(navigator.geolocation){
 
 *******************************************************/
 
+function resetDesign()
+{
+    window.localStorage.removeItem("container0");
+    window.localStorage.removeItem("container1");
+    window.localStorage.removeItem("container2");
+    
+    $('#container0').attr("src", 'img/head.png');
+    $('#container1').attr("src", 'img/torso.png');
+    $('#container2').attr("src", 'img/legs.png');
+    
+}
+
+function saveTheDesign()
+{
+    console.log("Saving the design! !");
+    
+    var hat = window.localStorage.getItem("container0");
+    var top = window.localStorage.getItem("container1");
+    var pants = window.localStorage.getItem("container2");
+    var designName = document.getElementById("designNameToSave").value;
+    
+    if ( hat == null || top == null || pants == null || designName == null)
+    {
+        alert("You haven't finished your design, did you remember to name it and select all 3 pieces?");
+        return;
+    }
+    
+    console.log("Saving the selections:"+
+                " hat: " + hat +
+                " top: " + top +
+                " pants: " + pants +
+                " designName: " + designName);
+                                    
+    
+    var loggedInUsername = window.localStorage.getItem("loggedInUser");
+    
+    if ( !loggedInUsername )
+    {
+        console.log("Error, currently logged in username did not exist or was invalid!");
+        return;
+    }
+
+    var rawUserData = window.localStorage.getItem( loggedInUsername );
+    var parsedUserData = JSON.parse(rawUserData);
+
+    var designObject = {};
+    
+    designObject.name = designName;
+    designObject.hat = hat;
+    designObject.top = top;
+    designObject.pants = pants;
+    
+    //Insert to the last item of the list, the new designObject, so the list automatically grows.
+    parsedUserData.designs.push(designObject);
+    
+    window.localStorage.setItem( loggedInUsername, JSON.stringify(parsedUserData));
+    
+    showDesignersDesign(designerIndex,designIndex);
+    window.location.href = "#menu";
+}
+
+/**************************************************
+
+            Replace images by clicking
+
+*******************************************************/
+$(document).ready(function(){           
+       
+	for(var j=0; j<10; j++){
+		if(j!=0){
+			$('#list'+ j).hide();
+		}
+	}	
+    
+	$('li a').on("click",function() {
+
+		//DEBUG//console.log("click: ", $(this).attr('href'));
+		
+		for(var i = 0; i < 10; i++){
+			
+			if($(this).attr('href') == '#list'+i){
+			  // alert($(this).attr('href'));
+				$('#list'+ i +'').show();                    
+				$('#container'+ i +'').prop('disabled',false);
+			} else {
+				 $('#container'+ i +'').prop('disabled',true);
+				$('#list'+i+'').hide();
+			}                
+		}
+
+	});
+
+});
+
+/**************************************************
+
+            Replace images by clicking
+
+*******************************************************/
 $(function(){
     //var clicked = 0;
     $('#list div img').on("click", function(){
         var listNumber = $(this).attr('class').replace(/[^\d.]/g,'');
         console.log("listnumber:", listNumber);
         var trial = $(this).attr('src');      
-        console.log(trial);
+        //DEBUG//console.log(trial);
        /* clicked++;
         if ( clicked >= 2){*/
         $('#container'+listNumber).attr("src", trial);
         var data = $(this).attr('id');
-        console.log(data);
+        //DEBUG//console.log(data);
         window.localStorage.setItem("container"+listNumber, data);
             //clicked=0;
        // } 

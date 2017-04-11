@@ -17,7 +17,17 @@
         },
         "cordova-plugin-googleplus": {
             "PACKAGE_NAME": "com.shanliao.mannequinapp"
+        },
+        "cordova-plugin-device": {
+            "PACKAGE_NAME": "com.shanliao.mannequinapp"
+        },
+        "cordova-plugin-geolocation": {
+            "PACKAGE_NAME": "com.shanliao.mannequinapp"
         }
     },
-    "dependent_plugins": {}
+    "dependent_plugins": {
+        "cordova-plugin-compat": {
+            "PACKAGE_NAME": "com.shanliao.mannequinapp"
+        }
+    }
 }

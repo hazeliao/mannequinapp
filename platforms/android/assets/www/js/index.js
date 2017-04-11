@@ -34,11 +34,14 @@ var app = {
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
+        //console.log("device.cordova: ", device.cordova);
+        console.log("cordova-plugin-device: device.platform: ", device.platform);
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
         
     }
+
 };
 
 /**********************************************
@@ -153,13 +156,6 @@ function swipeNextDesign( direction )
     */
     
     showDesignersDesign(designerIndex, designIndex);
-}
-
-function resetDesign()
-{
-    window.localStorage.removeItem("container0");
-    window.localStorage.removeItem("container1");
-    window.localStorage.removeItem("container2");    
 }
 
 function showDesignersDesign( designerIndexNow, designIndexNow )
@@ -502,6 +498,7 @@ function tryGoogleLogin()
         cordova plugin rm cordova-plugin-googleplus
 		cordova plugin add https://github.com/EddyVerbruggen/cordova-plugin-googleplus --variable REVERSED_CLIENT_ID=com.googleusercontent.apps.583206289891-eokrhgg2ignd47uqnqg3c95didpei892
     */
+    
 	window.plugins.googleplus.login(
 		{
             scopes: 'profile email',
@@ -537,6 +534,16 @@ function tryGoogleLogin()
         
 *****************************************/
 
+function doFacebookLogin()
+{
+    if (window.cordova.platformId == "browser") {
+        facebookConnectPlugin.browserInit(208554899623511);
+    }
+	console.log("Doing facebook login!");
+	facebookConnectPlugin.login(["email"], fbloginSuccess, fbloginFail);
+    window.localStorage.setItem("isLoggedInWithFacebook", "yeees");
+}
+
 function fbloginSuccess(response)
 {
 	console.log("Login succeeded!");
@@ -559,14 +566,78 @@ function fbloginFail(response)
 	alert("error loggin in :(");
 }
 
-function doFacebookLogin()
+/***********************************************
+
+ get geolocation for weather
+
+****************************************/
+
+if(navigator.geolocation){
+                navigator.geolocation.getCurrentPosition(locationSuccess, locationError);
+            }
+            else{
+                showError("Your phone does not support geolocation!");
+        };
+
+        function locationSuccess(position){
+            var lat = position.coords.latitude;
+            var lon = position.coords.longitude;
+            fetchWeather(lat, lon);           
+        };
+
+        function locationError(error){
+            switch(error.code) {
+                case error.TIMEOUT:
+                    showError("A timeout occured! Please try again!");
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    showError('We can\'t detect your location. Sorry!');
+                    break;
+                case error.PERMISSION_DENIED:
+                    showError('Please allow geolocation access for this to work.');
+                    break;
+                case error.UNKNOWN_ERROR:
+                    showError('An unknown error occured!');
+                    break;
+            }
+        };
+
+        function showError(msg){
+            console.log("Error with weather: ", msg);
+            //if ( weatherDiv )
+            //    weatherDiv.addClass('error').html(msg);
+
+        };
+
+        function fetchWeather(lan, lon){            
+            
+            $.ajax({
+                url:"http://api.openweathermap.org/data/2.5/weather?lat="+lan+"&lon="+lon+"&APPID=c5480a0746e7943d8282d79f648a400a",
+                dataType:"json",
+                timeout:5000
+            })
+            .done(function(data){
+                $("#weather").attr("src",data.url);
+                $("#weatherIcon").attr("src","http://openweathermap.org/img/w/"+data.weather[0].icon+".png");
+            })
+        };
+
+/**************************************************
+
+            designing page
+
+*******************************************************/
+
+function resetDesign()
 {
-    if (window.cordova.platformId == "browser") {
-        facebookConnectPlugin.browserInit(208554899623511);
-    }
-	console.log("Doing facebook login!");
-	facebookConnectPlugin.login(["email"], fbloginSuccess, fbloginFail);
-    window.localStorage.setItem("isLoggedInWithFacebook", "yeees");
+    window.localStorage.removeItem("container0");
+    window.localStorage.removeItem("container1");
+    window.localStorage.removeItem("container2");
+    
+    $('#container0').attr("src", 'img/head.png');
+    $('#container1').attr("src", 'img/torso.png');
+    $('#container2').attr("src", 'img/legs.png');
+    
 }
 
 function saveTheDesign()
@@ -614,19 +685,26 @@ function saveTheDesign()
     
     window.localStorage.setItem( loggedInUsername, JSON.stringify(parsedUserData));
     
+    showDesignersDesign(designerIndex,designIndex);
     window.location.href = "#menu";
 }
 
+/**************************************************
+
+            Replace images by clicking
+
+*******************************************************/
 $(document).ready(function(){           
-   
+       
 	for(var j=0; j<10; j++){
 		if(j!=0){
 			$('#list'+ j).hide();
 		}
-	}		 
-	  
-	$('li a').on("click",function(){
+	}	
+    
+	$('li a').on("click",function() {
 		
+        console.log("EVE");
 		console.log("click: ", $(this).attr('href'));
 		
 		for(var i = 0; i < 10; i++){
@@ -645,70 +723,15 @@ $(document).ready(function(){
 
 });
 
-/***********************************************
-
- get geolocation for weather
-
-****************************************/
-
-if(navigator.geolocation){
-                navigator.geolocation.getCurrentPosition(locationSuccess, locationError);
-            }
-            else{
-                showError("Your phone does not support geolocation!");
-        };
-
-        function locationSuccess(position){
-            var lat = position.coords.latitude;
-            var lon = position.coords.longitude;
-            fetchWeather(lat, lon);           
-        };
-
-        function locationError(error){
-            switch(error.code) {
-                case error.TIMEOUT:
-                    showError("A timeout occured! Please try again!");
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    showError('We can\'t detect your location. Sorry!');
-                    break;
-                case error.PERMISSION_DENIED:
-                    showError('Please allow geolocation access for this to work.');
-                    break;
-                case error.UNKNOWN_ERROR:
-                    showError('An unknown error occured!');
-                    break;
-            }
-        };
-
-        function showError(msg){
-            if ( weatherDiv )
-                weatherDiv.addClass('error').html(msg);
-
-        };
-
-        function fetchWeather(lan, lon){            
-            
-            $.ajax({
-                url:"http://api.openweathermap.org/data/2.5/weather?lat="+lan+"&lon="+lon+"&APPID=c5480a0746e7943d8282d79f648a400a",
-                dataType:"json",
-                timeout:5000
-            })
-            .done(function(data){
-                $("#weather").attr("src",data.url);
-                $("#weatherIcon").attr("src","http://openweathermap.org/img/w/"+data.weather[0].icon+".png");
-            })
-        };
-
 /**************************************************
 
-            designing page
+            Replace images by clicking
 
 *******************************************************/
-
 $(function(){
     //var clicked = 0;
     $('#list div img').on("click", function(){
+        console.log("ADAM");
         var listNumber = $(this).attr('class').replace(/[^\d.]/g,'');
         console.log("listnumber:", listNumber);
         var trial = $(this).attr('src');      
